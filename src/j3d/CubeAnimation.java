@@ -44,7 +44,7 @@ public class CubeAnimation extends Behavior {
 	
 	public void addCommand(Command kind) {
 		logger.info("addCommand called");
-		synchronized (this) {
+		synchronized (command) {
 			command.add(kind);
 		}
 		running = true;
@@ -70,8 +70,6 @@ public class CubeAnimation extends Behavior {
 					doCommand();
 					tearDown();
 				}
-			} else {
-				//running = false;
 			}			
 		}
 		wakeupOn(wakeUp);
@@ -207,70 +205,8 @@ public class CubeAnimation extends Behavior {
 
 	private void doCommand() {
 		counter--;
-		switch (currentCommand) {
-		case U1:
-		case U2:
-		case U3:
-			upRotate();
-			break;
-		case R1:
-		case R2:
-		case R3:
-			rightRotate();
-			break;
-		case F1:
-		case F2:
-		case F3:
-			frontRotate();
-			break;
-		default:
-			break;
-		}
-	}
-
-	private void frontRotate() {
-//		Transform3D tr = new Transform3D();
-//		Matrix3d mat = new Matrix3d();
-//		Vector3d vec = new Vector3d();
 		for (int i = 0; i < moving.length; i++) {
 			moving[i].rotate();
-//			moving[i].getTransform(tr);
-//			tr.get(mat, vec);
-//			vec.x = vec.x * cos - vec.y * sin;
-//			vec.y = vec.x * sin + vec.y * cos;
-//			tr = new Transform3D(mat, vec, 1.0);
-//			moving[i].setTransform(tr);
 		}
 	}
-
-	private void rightRotate() {
-//		Transform3D tr = new Transform3D();
-//		Matrix3d mat = new Matrix3d();
-//		Vector3d vec = new Vector3d();
-		for (int i = 0; i < moving.length; i++) {
-			moving[i].rotate();
-//			moving[i].getTransform(tr);
-//			tr.get(mat, vec);
-//			vec.z = vec.z * cos - vec.y * sin;
-//			vec.y = vec.z * sin + vec.y * cos;
-//			tr = new Transform3D(mat, vec, 1.0);
-//			moving[i].setTransform(tr);
-		}
-	}
-
-	private void upRotate() {
-//		Transform3D tr = new Transform3D();
-//		Matrix3d mat = new Matrix3d();
-//		Vector3d vec = new Vector3d();
-		for (int i = 0; i < moving.length; i++) {
-			moving[i].rotate();
-//			moving[i].getTransform(tr);
-//			tr.get(mat, vec);
-//			vec.x = vec.x * cos - vec.z * sin;
-//			vec.z = vec.x * sin + vec.z * cos;
-//			tr = new Transform3D(mat, vec, 1.0);
-//			moving[i].setTransform(tr);
-		}
-	}
-
 }
