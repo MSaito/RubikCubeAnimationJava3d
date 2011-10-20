@@ -24,22 +24,22 @@ public class Cubie2Test extends JFrame {
 	
 	public BranchGroup createSceneGraph() {
         BranchGroup objRoot = new BranchGroup();
-        Cubie2[] Rubik = new Cubie2[8];
+        Cubie[] Rubik = new Cubie[8];
         // â∫íi
-        Rubik[0] = new Cubie2(0.5, -0.55, -0.55, -0.55);
-        Rubik[1] = new Cubie2(0.5, +0.55, -0.55, -0.55);
-        Rubik[2] = new Cubie2(0.5, -0.55, -0.55, +0.55);
-        Rubik[3] = new Cubie2(0.5, +0.55, -0.55, +0.55);
+        Rubik[0] = new Cubie(0.5, -0.55, -0.55, -0.55);
+        Rubik[1] = new Cubie(0.5, +0.55, -0.55, -0.55);
+        Rubik[2] = new Cubie(0.5, -0.55, -0.55, +0.55);
+        Rubik[3] = new Cubie(0.5, +0.55, -0.55, +0.55);
         // è„íi
-        Rubik[4] = new Cubie2(0.5, -0.55, +0.55, -0.55);
-        Rubik[5] = new Cubie2(0.5, +0.55, +0.55, -0.55);
-        Rubik[6] = new Cubie2(0.5, -0.55, +0.55, +0.55);
-        Rubik[7] = new Cubie2(0.5, +0.55, +0.55, +0.55);
+        Rubik[4] = new Cubie(0.5, -0.55, +0.55, -0.55);
+        Rubik[5] = new Cubie(0.5, +0.55, +0.55, -0.55);
+        Rubik[6] = new Cubie(0.5, -0.55, +0.55, +0.55);
+        Rubik[7] = new Cubie(0.5, +0.55, +0.55, +0.55);
         Transform3D t3d = new Transform3D();
         //t3d.mul(t3dy, t3dx);
         TransformGroup objTrans1 = new TransformGroup(t3d);
         objRoot.addChild(objTrans1);
-        for (Cubie2 c: Rubik) {
+        for (Cubie c: Rubik) {
         	objTrans1.addChild(c);
         }
         Background background = new Background(new Color3f(0.8f, 0.8f, 0.9f));

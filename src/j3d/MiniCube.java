@@ -25,15 +25,15 @@ public class MiniCube extends Group {
 	private static final int bottomIndex[] = {2, 3, 6, 7};
 	private static MiniCube adam = null;
 
-	private Cubie[] cubies;
+	private CubieOld[] cubies;
 	private TransformGroup[] trGrp;
 
 	
 	public MiniCube () {
 		trGrp = new TransformGroup[8];
-		cubies = new Cubie[8];
+		cubies = new CubieOld[8];
 		for (int i = 0; i < 8; i++) {
-			adam.cubies[i] = new Cubie(cubieSize);
+			adam.cubies[i] = new CubieOld(cubieSize);
 		}
 		moveInitial(this);
 	}

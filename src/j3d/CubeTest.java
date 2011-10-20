@@ -27,7 +27,7 @@ public class CubeTest extends JFrame {
 	public BranchGroup createSceneGraph() {
         BranchGroup objRoot = new BranchGroup();
 
-        Cubie cube = new Cubie(new Color3f[0]);
+        CubieOld cube = new CubieOld(new Color3f[0]);
         cube.setColor(Box.RIGHT, new Color3f(0.0f, 0.0f, 1.0f));
         cube.setColor(Box.FRONT, new Color3f(1.0f, 0.0f, 0.0f));
         cube.setColor(Box.TOP, new Color3f(0.0f, 1.0f, 0.0f));
