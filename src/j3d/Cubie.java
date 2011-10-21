@@ -49,9 +49,9 @@ public class Cubie extends TransformGroup {
 		Shape3D shape = cube.getShape(face);
 		Appearance ap = (Appearance)shape.getAppearance().cloneNodeComponent(true);
 		Material mat = new Material();
+        mat.setCapability(Material.ALLOW_COMPONENT_READ);
+        mat.setCapability(Material.ALLOW_COMPONENT_WRITE);
 		mat.setDiffuseColor(color);
-		//mat.setEmissiveColor(color);
-		//mat.setSpecularColor(color);
 		ap.setMaterial(mat);
 		shape.setAppearance(ap);
 	}
@@ -71,7 +71,7 @@ public class Cubie extends TransformGroup {
 		az = new Vector3d(0, 0, 1);
 	}
 
-	public void start(Command com, double angle) {
+	public void start(CommandType com, double angle) {
 		double sin;
 		double cos;
 		switch (com) {
@@ -113,7 +113,7 @@ public class Cubie extends TransformGroup {
 		}
 	}
 	
-	public void stop(Command com) {
+	public void stop(CommandType com) {
 		Vector3d tmp;
 		switch (com) {
 		case U1:

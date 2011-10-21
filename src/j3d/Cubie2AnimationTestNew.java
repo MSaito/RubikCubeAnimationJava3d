@@ -105,13 +105,8 @@ public class Cubie2AnimationTestNew extends JFrame implements ActionListener {
 	private BranchGroup createSceneGraph() {
 		BoundingSphere bs = new BoundingSphere();
         rubik = makeRubik();
-        // start animation
 	    Transform3D axis = new Transform3D();
 	    axis.setTranslation(new Vector3f(0.0f, 0.0f, 0.0f));
-        // end animation
-        //Transform3D t3d = new Transform3D();
-        //t3d.mul(t3dy, t3dx);
-        //rootTrg = new TransformGroup(t3d);
         root = new BranchGroup();
         for (Cubie c: rubik) {
         	root.addChild(c);
@@ -194,7 +189,7 @@ public class Cubie2AnimationTestNew extends JFrame implements ActionListener {
 			setOperation(command.getText());
 		} else if (src instanceof JButton) {
 			JButton bt = (JButton)src;
-			animation.addCommand(Command.valueOf(bt.getText()));
+			animation.addCommand(CommandType.valueOf(bt.getText()));
 		}
 	}
 

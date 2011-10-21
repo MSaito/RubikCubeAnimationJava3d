@@ -19,9 +19,9 @@ public class CubeAnimation extends Behavior {
 	private final WakeupOnElapsedFrames wakeUp;
 	private final long maxCounter = 1000;
 	private boolean running;
-	private List<Command> command;
+	private List<CommandType> command;
 	private long counter;
-	private Command currentCommand;
+	private CommandType currentCommand;
 	private Cubie[] cubies;
 	private Cubie[] moving;
 	private double angle;
@@ -37,12 +37,12 @@ public class CubeAnimation extends Behavior {
 		moving = new Cubie[4];
 		wakeUp = new WakeupOnElapsedFrames(0);
 		running = false;
-		command = new LinkedList<Command>();
+		command = new LinkedList<CommandType>();
 		counter = 0;
-		currentCommand = Command.NOP;
+		currentCommand = CommandType.NOP;
 	}
 	
-	public void addCommand(Command kind) {
+	public void addCommand(CommandType kind) {
 		logger.info("addCommand called");
 		synchronized (command) {
 			command.add(kind);
@@ -60,7 +60,7 @@ public class CubeAnimation extends Behavior {
 	@Override
 	public void processStimulus(Enumeration arg0) {
 		if (running) {
-			if (currentCommand != Command.NOP) {
+			if (currentCommand != CommandType.NOP) {
 				doCommand();
 				tearDown();
 			} else if (! command.isEmpty()) {
@@ -141,7 +141,7 @@ public class CubeAnimation extends Behavior {
 			break;
 		default:
 		}
-		currentCommand = Command.NOP;
+		currentCommand = CommandType.NOP;
 	}
 
 	private void setupCommand() {
