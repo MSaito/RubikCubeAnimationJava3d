@@ -2,26 +2,30 @@ package j3d;
 
 import java.util.Enumeration;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.media.j3d.Behavior;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.WakeupOnElapsedFrames;
-import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
 public class CubeAnimation extends Behavior {
 	Logger logger = Logger.getAnonymousLogger();
-	
+	private static final int[] colorToPos = {0, 1, 2, 3, 2, 3, 6, 7, 3, 1, 7, 5,
+		1, 0, 5, 4, 0, 2, 4, 6, 6, 7, 4, 5}; 
+
 	private final WakeupOnElapsedFrames wakeUp;
-	private final long maxCounter = 1000;
+	private static final Command NOP = new Command(CommandType.NOP, "");
+	private long maxCounter = 500;
 	private boolean running;
-	private List<CommandType> command;
+	private Queue<Command> command;
+	//private Queue<String> arguments;
 	private long counter;
-	private CommandType currentCommand;
+	private Command currentCommand;
+	private Cubie[] initialCubies;
 	private Cubie[] cubies;
 	private Cubie[] moving;
 	private double angle;
@@ -33,39 +37,65 @@ public class CubeAnimation extends Behavior {
 	public CubeAnimation(Cubie[] cubies) {
 		super();
 		logger.info("constructor called");
-		this.cubies = cubies;
+		initialCubies = new Cubie[cubies.length];
+		this.cubies = new Cubie[cubies.length];
+		for (int i = 0; i < cubies.length; i++) {
+			initialCubies[i] = cubies[i];
+			this.cubies[i] = cubies[i];
+		}
 		moving = new Cubie[4];
 		wakeUp = new WakeupOnElapsedFrames(0);
 		running = false;
-		command = new LinkedList<CommandType>();
+		command = new LinkedList<Command>();
+		//arguments = new LinkedList<String>();
 		counter = 0;
-		currentCommand = CommandType.NOP;
+		currentCommand = NOP;
 	}
 	
-	public void addCommand(CommandType kind) {
-		logger.info("addCommand called");
+	public void addCommand(Command com) {
+		logger.info("commandType is " + com);
 		synchronized (command) {
-			command.add(kind);
+			command.add(com);
 		}
-		running = true;
 	}
 	
+//	public void addArguments(String arg) {
+//		logger.info("arguments are  " + arg);
+//		synchronized (arguments) {
+//			arguments.add(arg);
+//		}
+//	}
+	
+	public void start() {
+		logger.info("start");
+		synchronized (this) {
+			running = true;
+		}
+	}
+
+	public void stop() {
+		logger.info("stop");
+		synchronized (this) {
+			running = false;
+		}
+	}
+
 	@Override
 	public void initialize() {
 		logger.info("initialize called");
-		running = false;
+		running = true;
 		wakeupOn(wakeUp);
 	}
 
 	@Override
 	public void processStimulus(Enumeration arg0) {
 		if (running) {
-			if (currentCommand != CommandType.NOP) {
+			if (currentCommand != NOP) {
 				doCommand();
 				tearDown();
 			} else if (! command.isEmpty()) {
 				synchronized (command) {
-					currentCommand = command.remove(0);
+					currentCommand = command.remove();
 					setupCommand();
 					doCommand();
 					tearDown();
@@ -80,11 +110,16 @@ public class CubeAnimation extends Behavior {
 			return;
 		}
 		logger.info("tear down");
-		running = false;
-		for (Cubie c : moving) {
-			c.stop(currentCommand);
+		if (currentCommand == NOP || 
+				currentCommand.getType() == CommandType.COLOR || 
+				currentCommand.getType() == CommandType.SPEED) {
+			currentCommand = NOP;
+			return;
 		}
-		switch (currentCommand) {
+		for (Cubie c : moving) {
+			c.teardownRotation(currentCommand.getType());
+		}
+		switch (currentCommand.getType()) {
 		case U1:
 			cubies[0] = moving[2];
 			cubies[1] = moving[0];
@@ -141,13 +176,22 @@ public class CubeAnimation extends Behavior {
 			break;
 		default:
 		}
-		currentCommand = CommandType.NOP;
+		currentCommand = NOP;
 	}
 
 	private void setupCommand() {
 		logger.info("currentCommand:" + currentCommand);
+		if (currentCommand.getType() == CommandType.COLOR) {
+			setupColor();
+			counter = 0;
+			return;
+		} else if (currentCommand.getType() == CommandType.SPEED) {
+			setupSpeed();
+			counter = 0;
+			return;
+		}
 		angle = Math.PI / 2.0 / maxCounter;
-		switch (currentCommand) {
+		switch (currentCommand.getType()) {
 		case U1:
 		case U2:
 		case U3:
@@ -174,7 +218,7 @@ public class CubeAnimation extends Behavior {
 			break;
 		default:
 		}
-		switch (currentCommand) {
+		switch (currentCommand.getType()) {
 		case U2:
 		case R2:
 		case F2:
@@ -188,7 +232,7 @@ public class CubeAnimation extends Behavior {
 			counter = maxCounter;
 		}
 		for (Cubie c : moving) {
-			c.start(currentCommand, angle);
+			c.setupRotation(currentCommand.getType(), angle);
 		}
 		if (logger.isLoggable(Level.INFO)) {
 			Transform3D tr = new Transform3D();
@@ -203,10 +247,56 @@ public class CubeAnimation extends Behavior {
 		}
 	}
 
+	private void setupSpeed() {
+		String speedStr = currentCommand.getArgument();
+		if (speedStr.matches("^[0-9]+$")) {
+			long speed = Long.parseLong(speedStr);
+			if (speed <= 0) {
+				speed = 1;
+			}
+			maxCounter = Math.round(1000.0 / speed * 1000);
+		}
+		logger.info("maxCounter = " + maxCounter);
+	}
+
+	private void setupColor() {
+		String colorString = currentCommand.getArgument();
+		logger.info("colorString = " + colorString);
+		String[][] colors = makeRubikColors(colorString);
+		for (int i = 0; i < initialCubies.length; i++) {
+			cubies[i] = initialCubies[i];
+		}
+		for (int i = 0; i < cubies.length; i++) {
+			cubies[i].reset();
+			cubies[i].setColor(colors[i]);
+		}
+	}
+	
+	private String[][] makeRubikColors(String str) {
+		String[][] result = new String[8][];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = new String[6];
+			for (int j = 0; j < result[i].length; j++) {
+				result[i][j] = "";
+			}
+		}
+		for (int i = 0; i < str.length(); i++) {
+			String c = str.substring(i, i + 1);
+			int pos = colorToPos[i];
+			int face = i / 4;
+			result[pos][face] = c;
+		}
+		return result;
+	}
+	
 	private void doCommand() {
+		if (counter <= 0) {
+			return;
+		}
 		counter--;
 		for (int i = 0; i < moving.length; i++) {
 			moving[i].rotate();
 		}
 	}
+
 }

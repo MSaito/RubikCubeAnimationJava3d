@@ -1,30 +1,24 @@
 package j3d;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.Material;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.AxisAngle4d;
-import javax.vecmath.Color3f;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
 import com.sun.j3d.utils.geometry.Box;
 
 public class Cubie extends TransformGroup {
-	private static final Color3f Red = new Color3f(1.0f, 0.0f, 0.0f);
-	private static final Color3f Green = new Color3f(0.0f, 1.0f, 0.0f);
-	private static final Color3f Blue = new Color3f(0.0f, 0.0f, 1.0f);
-	private static final Color3f Yellow = new Color3f(1.0f, 1.0f, 0.0f);
-	private static final Color3f Orange = new Color3f(1.0f, 0.4f, 0.0f);
-	private static final Color3f White = new Color3f(1.0f, 1.0f, 1.0f);
-	private static final Color3f[] defaultColor = {Blue, Green, Orange, Yellow, Red, White}; 
+	private static final String[] defaultColor = {"B", "G", "O", "Y", "R", "W"};
+	private static final int[] faces = {Box.TOP, Box.FRONT, Box.RIGHT, Box.BACK, Box.LEFT, Box.BOTTOM};
+	private ColorAppearance appearance;
 	private Vector3d currentAxis;
 	private Vector3d ax;
 	private Vector3d ay;
 	private Vector3d az;
 	private Matrix3d mat;
+	private Vector3d initPos;
 	private double angle;
 	private Box cube;
 	
@@ -32,46 +26,55 @@ public class Cubie extends TransformGroup {
 		this(size, x, y, z, defaultColor);
 	}
 	
-	public Cubie(double size, double x, double y, double z, Color3f[] colors) {
+	public Cubie(double size, double x, double y, double z, String[] colors) {
 		super();
 		cube = new Box((float)size, (float)size, (float)size, Box.GENERATE_NORMALS, null);
-		setDefaultColor(cube, colors);
+		appearance = ColorAppearance.getColorAppearance();
+		for (int i = 0; i < faces.length; i++) {
+			Shape3D shape = cube.getShape(faces[i]);
+			shape.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
+			shape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
+			shape.setAppearance(appearance.get(colors[i]));
+		}
+		initPos = new Vector3d(x, y, z);
         Transform3D t3dMove = new Transform3D();
-        t3dMove.setTranslation(new Vector3d(x, y, z));
+        t3dMove.setTranslation(initPos);
         setTransform(t3dMove);
         addChild(cube);
         setCapability(ALLOW_TRANSFORM_READ);
         setCapability(ALLOW_TRANSFORM_WRITE);
         initAxis();
 	}
-		
-	private void setColor(Box cube, int face, Color3f color) {
-		Shape3D shape = cube.getShape(face);
-		Appearance ap = (Appearance)shape.getAppearance().cloneNodeComponent(true);
-		Material mat = new Material();
-        mat.setCapability(Material.ALLOW_COMPONENT_READ);
-        mat.setCapability(Material.ALLOW_COMPONENT_WRITE);
-		mat.setDiffuseColor(color);
-		ap.setMaterial(mat);
-		shape.setAppearance(ap);
+	
+	public void reset() {
+        Transform3D t3dMove = new Transform3D();
+        t3dMove.setTranslation(initPos);
+        setTransform(t3dMove);
+        initAxis();
 	}
 	
-	private void setDefaultColor(Box cube, Color3f[] colors) {
-		setColor(cube, Box.TOP, colors[0]);
-		setColor(cube, Box.FRONT, colors[1]);
-		setColor(cube, Box.RIGHT, colors[2]);
-		setColor(cube, Box.BACK, colors[3]);
-		setColor(cube, Box.LEFT, colors[4]);
-		setColor(cube, Box.BOTTOM, colors[5]);
+	private void setAppearance(int face, String color) {
+		Shape3D shape = cube.getShape(face);
+		shape.setAppearance(appearance.get(color));
+	}
+	
+	public void setColor(String[] colors) {		
+		setAppearance(Box.TOP, colors[0]);
+		setAppearance(Box.FRONT, colors[1]);
+		setAppearance(Box.RIGHT, colors[2]);
+		setAppearance(Box.BACK, colors[3]);
+		setAppearance(Box.LEFT, colors[4]);
+		setAppearance(Box.BOTTOM, colors[5]);
 	}
 
+	
 	private void initAxis() {
 		ax = new Vector3d(1, 0, 0);
 		ay = new Vector3d(0, 1, 0);
 		az = new Vector3d(0, 0, 1);
 	}
 
-	public void start(CommandType com, double angle) {
+	public void setupRotation(CommandType com, double angle) {
 		double sin;
 		double cos;
 		switch (com) {
@@ -113,7 +116,7 @@ public class Cubie extends TransformGroup {
 		}
 	}
 	
-	public void stop(CommandType com) {
+	public void teardownRotation(CommandType com) {
 		Vector3d tmp;
 		switch (com) {
 		case U1:
