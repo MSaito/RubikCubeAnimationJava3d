@@ -27,7 +27,6 @@ public class Cubie extends TransformGroup {
 	}
 	
 	public Cubie(double size, double x, double y, double z, String[] colors) {
-		super();
 		cube = new Box((float)size, (float)size, (float)size, Box.GENERATE_NORMALS, null);
 		appearance = ColorAppearance.getColorAppearance();
 		for (int i = 0; i < faces.length; i++) {

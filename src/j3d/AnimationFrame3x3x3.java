@@ -29,10 +29,10 @@ import javax.vecmath.Vector3f;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
-public class Animation2x2 extends JFrame implements ActionListener {
+public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private HashMap<JButton, CommandType> commandMap;
-    private CubeBehavior2x2 animation;
+    private CubeBehavior3x3 animation;
     private JTextField color;
     private JTextField command;
     private JTextField speed;
@@ -72,15 +72,15 @@ public class Animation2x2 extends JFrame implements ActionListener {
 	}
 
 	private JPanel makeOperation() {
-		JButton[][] operationButtons = new JButton[3][];
+		JButton[][] operationButtons = new JButton[6][];
 		String pre = "<html>";
-		String[] op = {"U", "R", "F"};
+		String[] op = {"U", "R", "F", "D", "L", "B"};
 		String[] num = {"", "<sup>2</sup>", "<sup>-1</sup>"};
         JPanel operationPanel = new JPanel();
-        operationPanel.setLayout(new GridLayout(3, 3, 2, 2));
-		for (int i = 0; i < 3; i++) {
+        operationPanel.setLayout(new GridLayout(6, 3, 2, 2));
+		for (int i = 0; i < operationButtons.length; i++) {
 			operationButtons[i] = new JButton[3];
-			for (int j = 0; j < 3; j++) {
+			for (int j = 0; j < operationButtons[i].length; j++) {
 				operationButtons[i][j] = new JButton(pre + op[i] + num[j]);
 		        operationPanel.add(operationButtons[i][j]);
 		        operationButtons[i][j].addActionListener(this);
@@ -129,8 +129,8 @@ public class Animation2x2 extends JFrame implements ActionListener {
 		return viewOperation;
 	}
 	
-    public Animation2x2() {
-    	super("Rubik Cube 2x2x2");
+    public AnimationFrame3x3x3() {
+    	super("Rubik Cube 3x3x3");
         getContentPane().setLayout(new BorderLayout());
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
         canvas = new Canvas3D(config);
@@ -143,7 +143,7 @@ public class Animation2x2 extends JFrame implements ActionListener {
 	    BranchGroup root = new BranchGroup();
         BoundingSphere bounds=new BoundingSphere(
         		new Point3d(),Double.POSITIVE_INFINITY);
-        animation = new CubeBehavior2x2();
+        animation = new CubeBehavior3x3();
         animation.setSchedulingBounds(bounds);
         TransformGroup[] target = animation.getTarget();
         for (TransformGroup c: target) {
@@ -189,14 +189,14 @@ public class Animation2x2 extends JFrame implements ActionListener {
         universe.addBranchGraph(scene);
 
         universe.addBranchGraph(createLight());
-        setColor("BBBBGGGGOOOOYYYYRRRRWWWW");
+        setColor("BBBBBBBBBGGGGGGGGGOOOOOOOOOYYYYYYYYYRRRRRRRRRWWWWWWWWW");
 	}
 
     /**
      * @param args
      */
     public static void main(String[] args) {
-        Animation2x2 sample = new Animation2x2();
+        AnimationFrame3x3x3 sample = new AnimationFrame3x3x3();
         sample.setBounds(10, 10, 1000, 1000);
         sample.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         sample.setVisible(true);
@@ -240,7 +240,7 @@ public class Animation2x2 extends JFrame implements ActionListener {
 		if (text.length() == 0) {
 			return;
 		}
-		if (text.length() < 24) {
+		if (text.length() < 54) {
 			message.setForeground(Color.RED);
 			message.setText("•¶Žš—ñ‚ª’Z‚©‚·‚¬‚Ü‚·");
 			return;

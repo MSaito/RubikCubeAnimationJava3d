@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Rsrc-Class-Path: ./
+Class-Path: .
+Rsrc-Main-Class: j3d.Animation2x2
+Main-Class: org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader
+
