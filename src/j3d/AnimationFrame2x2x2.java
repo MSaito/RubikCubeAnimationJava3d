@@ -29,10 +29,10 @@ import javax.vecmath.Vector3f;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
-public class Animation2x2 extends JFrame implements ActionListener {
+public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private HashMap<JButton, CommandType> commandMap;
-    private CubeBehavior2x2 animation;
+    private CubeBehavior2x2x2 animation;
     private JTextField color;
     private JTextField command;
     private JTextField speed;
@@ -129,7 +129,7 @@ public class Animation2x2 extends JFrame implements ActionListener {
 		return viewOperation;
 	}
 	
-    public Animation2x2() {
+    public AnimationFrame2x2x2() {
     	super("Rubik Cube 2x2x2");
         getContentPane().setLayout(new BorderLayout());
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
@@ -143,7 +143,7 @@ public class Animation2x2 extends JFrame implements ActionListener {
 	    BranchGroup root = new BranchGroup();
         BoundingSphere bounds=new BoundingSphere(
         		new Point3d(),Double.POSITIVE_INFINITY);
-        animation = new CubeBehavior2x2();
+        animation = new CubeBehavior2x2x2();
         animation.setSchedulingBounds(bounds);
         TransformGroup[] target = animation.getTarget();
         for (TransformGroup c: target) {
@@ -196,7 +196,7 @@ public class Animation2x2 extends JFrame implements ActionListener {
      * @param args
      */
     public static void main(String[] args) {
-        Animation2x2 sample = new Animation2x2();
+        AnimationFrame2x2x2 sample = new AnimationFrame2x2x2();
         sample.setBounds(10, 10, 1000, 1000);
         sample.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         sample.setVisible(true);

@@ -32,7 +32,7 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
 public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private HashMap<JButton, CommandType> commandMap;
-    private CubeBehavior3x3 animation;
+    private CubeBehavior3x3x3 animation;
     private JTextField color;
     private JTextField command;
     private JTextField speed;
@@ -60,7 +60,7 @@ public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
 		north.add(command);
 		north.add(new JLabel("‘¬“x"));
 		north.add(speed);
-		speed.setText("1000");
+		speed.setText(RubikProperties.get("speed"));
 		north.add(setupButton);
 		north.add(message);
 		outer.add(north);
@@ -143,7 +143,7 @@ public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
 	    BranchGroup root = new BranchGroup();
         BoundingSphere bounds=new BoundingSphere(
         		new Point3d(),Double.POSITIVE_INFINITY);
-        animation = new CubeBehavior3x3();
+        animation = new CubeBehavior3x3x3();
         animation.setSchedulingBounds(bounds);
         TransformGroup[] target = animation.getTarget();
         for (TransformGroup c: target) {

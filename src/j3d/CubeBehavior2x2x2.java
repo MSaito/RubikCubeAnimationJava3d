@@ -7,15 +7,14 @@ import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.media.j3d.Behavior;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.WakeupOnElapsedFrames;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
-public class CubeBehavior2x2 extends Behavior {
-	Logger logger = Logger.getLogger(CubeBehavior2x2.class.getCanonicalName());
+public class CubeBehavior2x2x2 extends CubeBehavior {
+	Logger logger = Logger.getLogger(CubeBehavior2x2x2.class.getCanonicalName());
 	private static final int[] colorToPos = {0, 1, 2, 3, 2, 3, 6, 7, 3, 1, 7, 5,
 		1, 0, 5, 4, 0, 2, 4, 6, 6, 7, 4, 5}; 
 
@@ -30,14 +29,14 @@ public class CubeBehavior2x2 extends Behavior {
 	private Cubie[] cubies;
 	private Cubie[] moving;
 	private double angle;
-	private ViewTransform viewTransform;
+	private ViewPoint viewTransform;
 	private EnumSet<CommandType> viewCommand;
 
 	/**
 	 * コンストラクタ
 	 * @param cubies
 	 */
-	public CubeBehavior2x2() {
+	public CubeBehavior2x2x2() {
 		super();
 		logger.fine("constructor called");
 		this.cubies = makeRubik();
@@ -45,7 +44,7 @@ public class CubeBehavior2x2 extends Behavior {
 		for (int i = 0; i < cubies.length; i++) {
 			initialCubies[i] = cubies[i];
 		}
-		viewTransform = new ViewTransform(6.0);
+		viewTransform = new ViewPoint(6.0);
 		moving = new Cubie[4];
 		wakeUp = new WakeupOnElapsedFrames(0);
 		running = false;

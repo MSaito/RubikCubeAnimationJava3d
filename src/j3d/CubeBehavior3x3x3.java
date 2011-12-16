@@ -7,13 +7,12 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.logging.Logger;
 
-import javax.media.j3d.Behavior;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.WakeupOnElapsedFrames;
 
-public class CubeBehavior3x3 extends Behavior {
-	private final Logger logger = Logger.getLogger(CubeBehavior3x3.class.getCanonicalName());
+public class CubeBehavior3x3x3 extends CubeBehavior {
+	private final Logger logger = Logger.getLogger(CubeBehavior3x3x3.class.getCanonicalName());
     private final EnumSet<CommandType> up = EnumSet.of(CommandType.U1, CommandType.U2, CommandType.U3);
     private final EnumSet<CommandType> down = EnumSet.of(CommandType.D1, CommandType.D2, CommandType.D3);
     private final EnumSet<CommandType> right = EnumSet.of(CommandType.R1, CommandType.R2, CommandType.R3);
@@ -48,7 +47,7 @@ public class CubeBehavior3x3 extends Behavior {
 
 	private final WakeupOnElapsedFrames wakeUp;
 	private static final Command NOP = new Command(CommandType.NOP, "");
-	private long maxCounter = 500;
+	private long maxCounter = RubikProperties.getInt("cubebehavior3x3x3.maxCounter");
 	private boolean running;
 	private Queue<Command> command;
 	private long counter;
@@ -57,14 +56,14 @@ public class CubeBehavior3x3 extends Behavior {
 	private Cubie[] cubies;
 	private Cubie[] moving;
 	private double angle;
-	private ViewTransform viewTransform;
+	private ViewPoint viewTransform;
 	private EnumSet<CommandType> viewCommand;
 
 	/**
 	 * コンストラクタ
 	 * @param cubies
 	 */
-	public CubeBehavior3x3() {
+	public CubeBehavior3x3x3() {
 		super();
 		logger.fine("constructor called");
 		this.cubies = makeRubik3x3();
@@ -72,7 +71,7 @@ public class CubeBehavior3x3 extends Behavior {
 		for (int i = 0; i < cubies.length; i++) {
 			initialCubies[i] = cubies[i];
 		}
-		viewTransform = new ViewTransform(8.0);
+		viewTransform = new ViewPoint(8.0);
 		moving = new Cubie[9];
 		wakeUp = new WakeupOnElapsedFrames(0);
 		running = false;

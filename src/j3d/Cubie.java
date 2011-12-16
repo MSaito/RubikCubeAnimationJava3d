@@ -94,7 +94,6 @@ public class Cubie extends TransformGroup {
 			this.angle = angle;
 			sin = Math.sin(-this.angle);
 			cos = Math.cos(-this.angle);
-			currentAxis = ay;
 			mat = new Matrix3d(1,   0,    0,
 					           0, cos, -sin,
 					           0, sin,  cos);
