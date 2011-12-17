@@ -6,6 +6,20 @@ import javax.media.j3d.Appearance;
 import javax.media.j3d.Material;
 import javax.vecmath.Color3f;
 
+/**
+ * 色を表す文字列と、その色に対応するJava3D の Appearance オブジェクトとの
+ * 対応を保持する。DiffuseColor 固定。
+ * <pre>
+ * "R" Red
+ * "G" Green
+ * "B" Blue
+ * "Y" Yellow
+ * "O" Orange
+ * "W" White
+ * "G" Grey
+ * </pre>
+ * @author M. Saito
+ */
 public class ColorAppearance {
 	private static final Color3f Red = new Color3f(1.0f, 0.0f, 0.0f);
 	private static final Color3f Green = new Color3f(0.0f, 1.0f, 0.0f);

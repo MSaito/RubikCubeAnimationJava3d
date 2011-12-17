@@ -6,16 +6,16 @@ import java.util.logging.Logger;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.AxisAngle4d;
-import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
 /**
+ * 視点変更のクラス
  * 視点方向はz軸のマイナス方向
- * baseTransform 累積していく
- * fixedTransform 正面ではなくちょっとずれてみるためのもの。毎回違うはず。
+ * baseTransform 複数回の回転を超えて累積していく
+ * fixedTransform 正面ではなくちょっとずれてみるためのもの。
  * viewTransform baseTransform のあと、fixedTransform でずれた視点。
- * @author saito
- *
+ * 
+ * @author M. Saito
  */
 public class ViewPoint {
     private static final Logger logger = Logger.getLogger(ViewPoint.class.getCanonicalName());
@@ -27,13 +27,15 @@ public class ViewPoint {
     private Transform3D fixedTransform;
     private Transform3D saveBase;
     private TransformGroup parent;
-    private Matrix3d inverseRotate;
     private Transform3D rotateTransform = new Transform3D();
-
     private Vector3d ax;
     private Vector3d ay;
     private Vector3d az;
 
+    /**
+     * コンストラクタ
+     * @param distance 原点からの距離
+     */
     public ViewPoint(double distance) {
         this.viewDistance = distance;
         initAxis();
@@ -44,20 +46,35 @@ public class ViewPoint {
         saveBase = new Transform3D(baseTransform);
     }
 
+    /**
+     * 座標軸の初期化
+     */
     private void initAxis() {
         ax = new Vector3d(1, 0, 0);
         ay = new Vector3d(0, 1, 0);
         az = new Vector3d(0, 0, 1);
     }
 
+    /**
+     * 視点の親ノードであるTransformGroupの情報が必要
+     * なのであとからもらう
+     * @param parent
+     */
     public void setParent(TransformGroup parent) {
         this.parent = parent;
     }
 
+    /**
+     * 視点のTransform3D情報を返す
+     * @return
+     */
     public Transform3D getTransform3D() {
         return viewTransform;
     }
 
+    /**
+     * 視点を初期位置にリセットする
+     */
     public void reset() {
         initAxis();
         fixedTransform = makeFixedTransform();
@@ -67,6 +84,11 @@ public class ViewPoint {
         parent.setTransform(viewTransform);
     }
 
+    /**
+     * 一連の視点移動処理の開始時点で必要な設定をする
+     * @param type 視点の移動方向
+     * @param angle アニメーションの一コマで動く角度
+     */
     public void setupRotate(CommandType type, double angle) {
         if (logger.isLoggable(Level.FINE)) {
             logger.fine("ax:" + ax);
@@ -82,9 +104,6 @@ public class ViewPoint {
             AxisAngle4d axisX = new AxisAngle4d(-ax.x, -ax.y, -ax.z, -angle);
             rotateTransform.setRotation(axisX);
         }
-        inverseRotate = new Matrix3d();
-        rotateTransform.get(inverseRotate);
-        inverseRotate.invert();
     }
 
     /**
@@ -119,6 +138,10 @@ public class ViewPoint {
         return fixedTransform;
     }
 
+    /**
+     * アニメーションの一コマで行う視点移動操作
+     * @param type
+     */
     public void doRotation(CommandType type) {
         baseTransform.mul(rotateTransform);
         viewTransform = new Transform3D(baseTransform);
@@ -126,6 +149,11 @@ public class ViewPoint {
         parent.setTransform(viewTransform);
      }
 
+    /**
+     * 一連のアニメーションの終了時点で行う操作
+     * パラメータは必要かと思ったが、今は使っていない。
+     * @param com 視点の移動方向を示す
+     */
     public void teardownRotation(CommandType com) {
         fixedTransform = makeFixedTransform();
     }

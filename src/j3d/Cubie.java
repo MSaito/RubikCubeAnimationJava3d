@@ -9,6 +9,10 @@ import javax.vecmath.Vector3d;
 
 import com.sun.j3d.utils.geometry.Box;
 
+/**
+ * ルービックキューブを構成する小さな立方体
+ * @author M. Saito
+ */
 public class Cubie extends TransformGroup {
 	private static final String[] defaultColor = {"B", "G", "O", "Y", "R", "W"};
 	private static final int[] faces = {Box.TOP, Box.FRONT, Box.RIGHT, Box.BACK, Box.LEFT, Box.BOTTOM};
@@ -22,10 +26,25 @@ public class Cubie extends TransformGroup {
 	private double angle;
 	private Box cube;
 	
+	/**
+	 * コンストラクタ。一辺のサイズと中心部の位置から立方体を作成する。
+	 * @param size 一辺の長さ
+	 * @param x 中心のx座標
+	 * @param y 中心のy座標
+	 * @param z 中心のz座標
+	 */
 	public Cubie(double size, double x, double y, double z) {
 		this(size, x, y, z, defaultColor);
 	}
 	
+	/**
+	 * コンストラクタ。一辺のサイズ、中心部の位置、各面の色から立方体を作成する。
+     * @param size 一辺の長さ
+     * @param x 中心のx座標
+     * @param y 中心のy座標
+     * @param z 中心のz座標
+	 * @param colors
+	 */
 	public Cubie(double size, double x, double y, double z, String[] colors) {
 		cube = new Box((float)size, (float)size, (float)size, Box.GENERATE_NORMALS, null);
 		appearance = ColorAppearance.getColorAppearance();
@@ -45,6 +64,9 @@ public class Cubie extends TransformGroup {
         initAxis();
 	}
 	
+	/**
+	 * 初期位置に戻す。各面の色は変更しない。
+	 */
 	public void reset() {
         Transform3D t3dMove = new Transform3D();
         t3dMove.setTranslation(initPos);
@@ -52,11 +74,28 @@ public class Cubie extends TransformGroup {
         initAxis();
 	}
 	
+	/**
+	 * 面の色を設定する
+	 * @param face 面の指定 Box.TOP など
+	 * @param color 色を表す文字列
+	 */
 	private void setAppearance(int face, String color) {
 		Shape3D shape = cube.getShape(face);
 		shape.setAppearance(appearance.get(color));
 	}
 	
+	/**
+	 * 立方体の各面の色を設定する
+	 * <pre>
+	 * colors[0] TOP の色
+     * colors[1] FRONT の色
+     * colors[2] RIGHT の色
+     * colors[3] BACK の色
+     * colors[4] LEFT の色
+     * colors[5] BOTTOM の色
+     * </pre>
+	 * @param colors 色を表す文字列の配列
+	 */
 	public void setColor(String[] colors) {		
 		setAppearance(Box.TOP, colors[0]);
 		setAppearance(Box.FRONT, colors[1]);
@@ -65,14 +104,21 @@ public class Cubie extends TransformGroup {
 		setAppearance(Box.LEFT, colors[4]);
 		setAppearance(Box.BOTTOM, colors[5]);
 	}
-
 	
+	/**
+	 * グローバル座標を初期化する
+	 */
 	private void initAxis() {
 		ax = new Vector3d(1, 0, 0);
 		ay = new Vector3d(0, 1, 0);
 		az = new Vector3d(0, 0, 1);
 	}
 
+	/**
+	 * 一連の回転アニメーションの最初に行う設定
+	 * @param com コマンドタイプ、回転方向を表す
+	 * @param angle アニメーション一コマで回転する角度
+	 */
 	public void setupRotation(CommandType com, double angle) {
 		double sin;
 		double cos;
@@ -114,6 +160,11 @@ public class Cubie extends TransformGroup {
 		}
 	}
 	
+	/**
+	 * アニメーション終了時に、グローバル座標を変更する。
+	 * 途中で変更する必要はない。
+	 * @param com
+	 */
 	public void teardownRotation(CommandType com) {
 		Vector3d tmp;
 		switch (com) {
@@ -162,6 +213,9 @@ public class Cubie extends TransformGroup {
 		}
 	}
 	
+	/**
+	 * アニメーションの一コマ分の回転操作
+	 */
 	public void rotate() {
 		AxisAngle4d axis = new AxisAngle4d(currentAxis.x, currentAxis.y, currentAxis.z, -angle);
 		Transform3D rot = new Transform3D();

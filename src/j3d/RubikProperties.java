@@ -11,6 +11,7 @@ public class RubikProperties extends Properties {
     private static RubikProperties me;
     private RubikProperties() {
     }
+    
     private RubikProperties(String fileName) throws IOException  {
         URL url = RubikProperties.class.getClassLoader().getResource(fileName);
         load(url.openStream());
@@ -40,5 +41,10 @@ public class RubikProperties extends Properties {
         String value = me.getProperty(key);
         int x = Integer.valueOf(value);
         return x;
+    }
+    
+    public static URL getURL(String fileName) {
+        setMe();
+        return RubikProperties.class.getClassLoader().getResource(fileName);
     }
 }

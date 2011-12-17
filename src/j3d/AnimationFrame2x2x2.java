@@ -29,6 +29,10 @@ import javax.vecmath.Vector3f;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
+/**
+ * 小さな立方体8個からなるルービックキューブ。
+ * @author M. Saito
+ */
 public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private HashMap<JButton, CommandType> commandMap;
@@ -40,15 +44,16 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
     private JLabel message;
     private Canvas3D canvas;
 	
+    /**
+     * ボタンの設定
+     */
 	private void setUpButton() {
 		commandMap = new HashMap<JButton, CommandType>();
 		JPanel outer = new JPanel();
-		//outer.setLayout(new BorderLayout());
 		outer.setLayout(new BoxLayout(outer, BoxLayout.Y_AXIS));
         getContentPane().add(outer, BorderLayout.EAST);
 		JPanel north = new JPanel();
 		north.setLayout(new GridLayout(8, 1));
-		//north.setLayout(new BoxLayout(north, BoxLayout.Y_AXIS));
 		color = new JTextField(15);
 		command = new JTextField(15);
 		speed = new JTextField(15);
@@ -71,6 +76,10 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
         outer.revalidate();
 	}
 
+	/**
+	 * ルービックキューブの基本操作用ボタン設定
+	 * @return 基本操作ボタンの配置されたパネル
+	 */
 	private JPanel makeOperation() {
 		JButton[][] operationButtons = new JButton[3][];
 		String pre = "<html>";
@@ -90,6 +99,10 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
 		return operationPanel;
 	}
 	
+	/**
+	 * 視点移動用ボタンの設定
+	 * @return 視点移動ボタンの配置されたパネル
+	 */
 	private JPanel makeViewOperation() {
         JPanel viewOperation = new JPanel();
         viewOperation.setLayout(new BoxLayout(viewOperation, BoxLayout.Y_AXIS));
@@ -129,6 +142,9 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
 		return viewOperation;
 	}
 	
+	/**
+	 * コンストラクタ
+	 */
     public AnimationFrame2x2x2() {
     	super("Rubik Cube 2x2x2");
         getContentPane().setLayout(new BorderLayout());
@@ -139,6 +155,10 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
         initialize(canvas);        
       }
 
+    /**
+     * シーングラフの作成
+     * @return シーングラフ
+     */
 	private BranchGroup createSceneGraph() {
 	    BranchGroup root = new BranchGroup();
         BoundingSphere bounds=new BoundingSphere(
@@ -157,6 +177,11 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
         return root;
       }
 	
+	/**
+	 * 光源の設定
+	 * 環境光源1個, 平行線光源2個(表と裏から照らす)
+	 * @return 光源を表すBranchGroup
+	 */
     private BranchGroup createLight() {
         Color3f lightColor = new Color3f(1.0f, 1.0f, 1.0f);
         Color3f lightColor2 = new Color3f(0.8f, 0.8f, 0.8f);
@@ -177,6 +202,10 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
         return br;
     }
     
+    /**
+     * 初期化
+     * @param canvas
+     */
 	private void initialize(Canvas3D canvas) {
         SimpleUniverse universe = new SimpleUniverse(canvas);
 		BranchGroup scene = createSceneGraph();
@@ -193,6 +222,7 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
 	}
 
     /**
+     * 起動用メイン処理
      * @param args
      */
     public static void main(String[] args) {
@@ -219,6 +249,11 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
 		}
 	}
 
+	/**
+	 * 基本操作用キーが押されたときに、CubeBehavior2x2x2のコマンドキューに
+	 * コマンドを送る
+	 * @param text
+	 */
 	private void setOperation(String text) {
 		if (text.length() == 0) {
 			return;
@@ -236,6 +271,11 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
 		animation.start();
 	}
 
+	/**
+	 * 色を変更するコマンド。
+	 * 実際には、これから解くべきルービックキューブの色を指定する。
+	 * @param text 色を表す文字列
+	 */
 	private void setColor(String text) {
 		if (text.length() == 0) {
 			return;
@@ -251,6 +291,11 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
 		color.setText("");
 	}
 	
+	/**
+	 * 回転速度を設定する
+	 * 数値は大きいほど高速
+	 * @param speed 回転速度
+	 */
 	private void setSpeed(String speed) {
 		if (speed.length() == 0) {
 			return;
@@ -260,6 +305,11 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
 		animation.start();
 	}
 
+	/**
+	 * コマンドを表す文字列を正規化する
+	 * @param text
+	 * @return 正規化された文字列
+	 */
 	private String convertText(String text) {
 		StringBuilder sb = new StringBuilder();
 		char pre = 0;
