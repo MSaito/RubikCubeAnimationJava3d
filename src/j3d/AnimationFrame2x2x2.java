@@ -173,6 +173,8 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
         Background background = new Background(new Color3f(0.6f, 0.6f, 0.8f));
         background.setApplicationBounds(bounds);
         root.addChild(background);
+        Room room = new Room(8);
+        root.addChild(room.getTransformGroup());
         //root.compile();
         return root;
       }

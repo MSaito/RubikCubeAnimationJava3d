@@ -17,6 +17,7 @@ import com.sun.j3d.utils.image.TextureLoader;
 
 /**
  * 手抜き工事の部屋（の壁）
+ * もしかして、でかい立方体一個でよかったのか。
  */
 public class Room {
     private static final Logger logger = Logger.getLogger(Room.class.getCanonicalName());
@@ -35,12 +36,17 @@ public class Room {
         {-1.0f, 0.0f, 0.0f}};
     private TransformGroup transGrp;
 
+    /**
+     * ルービックキューブのある部屋
+     * 六方向に同じ模様の壁を置いているだけ
+     * @param size 壁の一辺の大きさ
+     */
     public Room(double size) {
         transGrp = new TransformGroup();
         BufferedImage image;
         Texture texture;
         try {
-            image = ImageIO.read(RubikProperties.getURL("checkerWall.png"));
+            image = ImageIO.read(RubikProperties.getURL("checkerWall2.png"));
             texture = new TextureLoader(image).getTexture();
         } catch (IOException e) {
             logger.severe("Can't get texture");
@@ -71,6 +77,10 @@ public class Room {
         }
     }
     
+    /**
+     * この部屋を表すTransformGroupを返す
+     * @return この部屋を表すTransformGroup
+     */
     public TransformGroup getTransformGroup() {
         return transGrp;
     }

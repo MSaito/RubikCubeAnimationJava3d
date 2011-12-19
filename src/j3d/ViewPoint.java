@@ -1,6 +1,5 @@
 package j3d;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.media.j3d.Transform3D;
@@ -28,9 +27,6 @@ public class ViewPoint {
     private Transform3D saveBase;
     private TransformGroup parent;
     private Transform3D rotateTransform = new Transform3D();
-    private Vector3d ax;
-    private Vector3d ay;
-    private Vector3d az;
 
     /**
      * コンストラクタ
@@ -38,21 +34,11 @@ public class ViewPoint {
      */
     public ViewPoint(double distance) {
         this.viewDistance = distance;
-        initAxis();
         fixedTransform = makeFixedTransform();
         baseTransform = new Transform3D();
         viewTransform = new Transform3D(baseTransform);
         viewTransform.mul(fixedTransform);
         saveBase = new Transform3D(baseTransform);
-    }
-
-    /**
-     * 座標軸の初期化
-     */
-    private void initAxis() {
-        ax = new Vector3d(1, 0, 0);
-        ay = new Vector3d(0, 1, 0);
-        az = new Vector3d(0, 0, 1);
     }
 
     /**
@@ -76,7 +62,6 @@ public class ViewPoint {
      * 視点を初期位置にリセットする
      */
     public void reset() {
-        initAxis();
         fixedTransform = makeFixedTransform();
         baseTransform = new Transform3D(saveBase);
         viewTransform = new Transform3D(baseTransform);
@@ -90,32 +75,22 @@ public class ViewPoint {
      * @param angle アニメーションの一コマで動く角度
      */
     public void setupRotate(CommandType type, double angle) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("ax:" + ax);
-            logger.fine("ay:" + ay);
-            logger.fine("az:" + az);
-        }
         if (type == CommandType.VIEW_LEFT || type == CommandType.VIEW_RIGHT) {
             rotateTransform = new Transform3D();
-            AxisAngle4d axisY = new AxisAngle4d(ay.x, ay.y, ay.z, angle);
+            AxisAngle4d axisY = new AxisAngle4d(0, 1, 0, angle);
             rotateTransform.setRotation(axisY);
         } else if (type == CommandType.VIEW_DOWN || type == CommandType.VIEW_UP) {
             rotateTransform = new Transform3D();
-            AxisAngle4d axisX = new AxisAngle4d(-ax.x, -ax.y, -ax.z, -angle);
+            AxisAngle4d axisX = new AxisAngle4d(-1, 0, 0, -angle);
             rotateTransform.setRotation(axisX);
         }
     }
 
     /**
-     * 逆行列を作って　ax, ay を変換する
+     * ずらして見る部分
      * @return
      */
     private Transform3D makeFixedTransform() {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("ax:" + ax);
-            logger.fine("ay:" + ay);
-            logger.fine("az:" + az);
-        }
         AxisAngle4d axisX = new AxisAngle4d(1.0, 0.0, 0.0, viewAngleX);
         AxisAngle4d axisY = new AxisAngle4d(0.0, 1.0, 0.0, viewAngleY);
         Transform3D t3dx = new Transform3D();
@@ -126,7 +101,6 @@ public class ViewPoint {
         fixedTransform.mul(t3dy, t3dx);
 
         Transform3D viewMove3d = new Transform3D();
-//        Vector3d move = new Vector3d(az);
         Vector3d move = new Vector3d(0.0, 0.0, 1.0);
         logger.fine("viewDistance:" + viewDistance);
         move.scale(viewDistance);
@@ -151,11 +125,10 @@ public class ViewPoint {
 
     /**
      * 一連のアニメーションの終了時点で行う操作
-     * パラメータは必要かと思ったが、今は使っていない。
+     * 今は使っていない。
      * @param com 視点の移動方向を示す
      */
     public void teardownRotation(CommandType com) {
-        fixedTransform = makeFixedTransform();
     }
 
 }

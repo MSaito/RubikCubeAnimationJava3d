@@ -20,7 +20,7 @@ public class CubeBehavior2x2x2 extends CubeBehavior {
 
 	private final WakeupOnElapsedFrames wakeUp;
 	private static final Command NOP = new Command(CommandType.NOP, "");
-	private long maxCounter = 500;
+    private long maxCounter = RubikProperties.getInt("cubebehavior2x2x2.maxCounter");
 	private boolean running;
 	private Queue<Command> command;
 	private long counter;
