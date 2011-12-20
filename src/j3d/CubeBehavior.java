@@ -11,8 +11,16 @@ import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.WakeupOnElapsedFrames;
 
+/**
+ * 2x2x2 と 3x3x3 のルービックキューブをまとめたクラス
+ * 視点移動、色の設定なども含む
+ * よく考えられて作られたクラスではないので取り扱い注意
+ * 
+ * @author M. Saito
+ *
+ */
 public abstract class CubeBehavior extends Behavior {
-    private final Logger logger = Logger.getLogger(CubeBehavior3x3x3.class
+    private final Logger logger = Logger.getLogger(CubeBehavior.class
             .getCanonicalName());
     private static final Command NOP = new Command(CommandType.NOP, "");
     private boolean running;
@@ -24,6 +32,12 @@ public abstract class CubeBehavior extends Behavior {
     /*
      * protected final EnumSet は安全ではない。むしろかなり危険。
      * ImmutableEnumSet を使うべきである。もし、あれば。
+     * enum が便利なクラスならば、EnumSetもまた便利なクラスであるが、
+     * enum はimmutable なのに EnumSet は mutable なので、危険。
+     * サブクラスに見せる必要性がなければ、問題ないのだが。
+     */
+    /**
+     * U1, U2, U3 をまとめた
      */
     protected final EnumSet<CommandType> up = EnumSet.of(CommandType.U1,
             CommandType.U2, CommandType.U3);
@@ -44,7 +58,9 @@ public abstract class CubeBehavior extends Behavior {
     protected final EnumSet<CommandType> doubleSetFrom;
     protected final EnumSet<CommandType> inverseSetFrom;
 
-    private long maxCounter = RubikProperties.getInt("cubebehavior.maxCounter");
+    private long defaultMax = RubikProperties.getInt("cubebehavior.maxCounter");
+    private long maxCounter = defaultMax;
+    private long minCounter = 10;
     private long counter;
     private double viewAngle;
 
@@ -239,7 +255,10 @@ public abstract class CubeBehavior extends Behavior {
             if (speed <= 0) {
                 speed = 1;
             }
-            maxCounter = Math.round(1000.0 / speed * 1000);
+            maxCounter = Math.round((1.0 * defaultMax) / speed * defaultMax);
+            if (maxCounter < minCounter) {
+                maxCounter = minCounter;
+            }
         }
         logger.fine("maxCounter = " + maxCounter);
     }

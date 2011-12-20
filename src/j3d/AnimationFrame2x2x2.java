@@ -65,7 +65,7 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
 		north.add(command);
 		north.add(new JLabel("ë¨ìx"));
 		north.add(speed);
-		speed.setText("1000");
+		speed.setText(RubikProperties.get("speed"));
 		north.add(setupButton);
 		north.add(message);
 		outer.add(north);
@@ -117,7 +117,7 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
         center.setLayout(new BoxLayout(center, BoxLayout.X_AXIS));
         JButton vleft = new JButton("Å©");
         JButton vright = new JButton("Å®");
-        JButton vreset = new JButton("ÅE");
+        JButton vreset = new JButton("Reset");
         center.add(vleft);
         center.add(vreset);
         center.add(vright);
