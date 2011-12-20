@@ -30,67 +30,73 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
 public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
-	private static final long serialVersionUID = 1L;
-	private HashMap<JButton, CommandType> commandMap;
+    private static final long serialVersionUID = 1L;
+    private HashMap<JButton, CommandType> commandMap;
     private CubeBehavior3x3x3 animation;
-    private JTextField color;
+    // private JTextField color;
     private JTextField command;
     private JTextField speed;
+    private JButton setColor;
     private JButton setupButton;
     private JLabel message;
     private Canvas3D canvas;
-	
-	private void setUpButton() {
-		commandMap = new HashMap<JButton, CommandType>();
-		JPanel outer = new JPanel();
-		//outer.setLayout(new BorderLayout());
-		outer.setLayout(new BoxLayout(outer, BoxLayout.Y_AXIS));
+    private RubikInputFrame inputFrame;
+
+    private void setUpButton() {
+        inputFrame = new RubikInputFrame("Input 3x3x3", 3);
+        commandMap = new HashMap<JButton, CommandType>();
+        JPanel outer = new JPanel();
+        // outer.setLayout(new BorderLayout());
+        outer.setLayout(new BoxLayout(outer, BoxLayout.Y_AXIS));
         getContentPane().add(outer, BorderLayout.EAST);
-		JPanel north = new JPanel();
-		north.setLayout(new GridLayout(8, 1));
-		//north.setLayout(new BoxLayout(north, BoxLayout.Y_AXIS));
-		color = new JTextField(15);
-		command = new JTextField(15);
-		speed = new JTextField(15);
-		setupButton = new JButton("設定");
-		message = new JLabel("    ");
-		north.add(new JLabel("初期色の設定"));
-		north.add(color);
-		north.add(new JLabel("操作の設定"));
-		north.add(command);
-		north.add(new JLabel("速度"));
-		north.add(speed);
-		speed.setText(RubikProperties.get("speed"));
-		north.add(setupButton);
-		north.add(message);
-		outer.add(north);
-		setupButton.addActionListener(this);
+        JPanel north = new JPanel();
+        north.setLayout(new GridLayout(8, 1));
+        // north.setLayout(new BoxLayout(north, BoxLayout.Y_AXIS));
+        // color = new JTextField(15);
+        command = new JTextField(15);
+        speed = new JTextField(15);
+        setColor = new JButton("カラー設定");
+        setColor.addActionListener(this);
+        setupButton = new JButton("設定");
+        message = new JLabel("    ");
+        north.add(new JLabel("初期色の設定"));
+        north.add(setColor);
+        north.add(new JLabel("操作の設定"));
+        north.add(command);
+        north.add(new JLabel("速度"));
+        north.add(speed);
+        speed.setText(RubikProperties.get("speed"));
+        north.add(setupButton);
+        north.add(message);
+        outer.add(north);
+        setupButton.addActionListener(this);
         outer.add(makeOperation());
         outer.add(makeViewOperation());
         outer.add(Box.createVerticalGlue());
         outer.revalidate();
-	}
+    }
 
-	private JPanel makeOperation() {
-		JButton[][] operationButtons = new JButton[6][];
-		String pre = "<html>";
-		String[] op = {"U", "R", "F", "D", "L", "B"};
-		String[] num = {"", "<sup>2</sup>", "<sup>-1</sup>"};
+    private JPanel makeOperation() {
+        JButton[][] operationButtons = new JButton[6][];
+        String pre = "<html>";
+        String[] op = { "U", "R", "F", "D", "L", "B" };
+        String[] num = { "", "<sup>2</sup>", "<sup>-1</sup>" };
         JPanel operationPanel = new JPanel();
         operationPanel.setLayout(new GridLayout(6, 3, 2, 2));
-		for (int i = 0; i < operationButtons.length; i++) {
-			operationButtons[i] = new JButton[3];
-			for (int j = 0; j < operationButtons[i].length; j++) {
-				operationButtons[i][j] = new JButton(pre + op[i] + num[j]);
-		        operationPanel.add(operationButtons[i][j]);
-		        operationButtons[i][j].addActionListener(this);
-		        commandMap.put(operationButtons[i][j], Command.getCommandType(op[i] + (j+1)));
-			}
-		}
-		return operationPanel;
-	}
-	
-	private JPanel makeViewOperation() {
+        for (int i = 0; i < operationButtons.length; i++) {
+            operationButtons[i] = new JButton[3];
+            for (int j = 0; j < operationButtons[i].length; j++) {
+                operationButtons[i][j] = new JButton(pre + op[i] + num[j]);
+                operationPanel.add(operationButtons[i][j]);
+                operationButtons[i][j].addActionListener(this);
+                commandMap.put(operationButtons[i][j],
+                        Command.getCommandType(op[i] + (j + 1)));
+            }
+        }
+        return operationPanel;
+    }
+
+    private JPanel makeViewOperation() {
         JPanel viewOperation = new JPanel();
         viewOperation.setLayout(new BoxLayout(viewOperation, BoxLayout.Y_AXIS));
         JPanel top = new JPanel();
@@ -126,28 +132,29 @@ public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
         vleft.addActionListener(this);
         vright.addActionListener(this);
         vreset.addActionListener(this);
-		return viewOperation;
-	}
-	
+        return viewOperation;
+    }
+
     public AnimationFrame3x3x3() {
-    	super("Rubik Cube 3x3x3");
+        super("Rubik Cube 3x3x3");
         getContentPane().setLayout(new BorderLayout());
-        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+        GraphicsConfiguration config = SimpleUniverse
+                .getPreferredConfiguration();
         canvas = new Canvas3D(config);
         getContentPane().add(canvas, BorderLayout.CENTER);
-        setUpButton();        
-        initialize(canvas);        
-      }
+        setUpButton();
+        initialize(canvas);
+    }
 
-	private BranchGroup createSceneGraph() {
-	    BranchGroup root = new BranchGroup();
-        BoundingSphere bounds=new BoundingSphere(
-        		new Point3d(),Double.POSITIVE_INFINITY);
+    private BranchGroup createSceneGraph() {
+        BranchGroup root = new BranchGroup();
+        BoundingSphere bounds = new BoundingSphere(new Point3d(),
+                Double.POSITIVE_INFINITY);
         animation = new CubeBehavior3x3x3();
         animation.setSchedulingBounds(bounds);
         TransformGroup[] target = animation.getTarget();
-        for (TransformGroup c: target) {
-        	root.addChild(c);
+        for (TransformGroup c : target) {
+            root.addChild(c);
         }
         root.addChild(animation);
         Background background = new Background(new Color3f(0.6f, 0.6f, 0.8f));
@@ -155,10 +162,10 @@ public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
         root.addChild(background);
         Room room = new Room(16);
         root.addChild(room.getTransformGroup());
-        //root.compile();
+        // root.compile();
         return root;
-      }
-	
+    }
+
     private BranchGroup createLight() {
         Color3f lightColor = new Color3f(1.0f, 1.0f, 1.0f);
         Color3f lightColor2 = new Color3f(0.8f, 0.8f, 0.8f);
@@ -167,8 +174,8 @@ public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
         Vector3f direction2 = new Vector3f(2.0f, 2.0f, 2.0f);
         DirectionalLight light = new DirectionalLight(lightColor, direction);
         DirectionalLight light2 = new DirectionalLight(lightColor2, direction2);
-        BoundingSphere lightBounds = new BoundingSphere(
-        		new Point3d(),Double.POSITIVE_INFINITY);
+        BoundingSphere lightBounds = new BoundingSphere(new Point3d(),
+                Double.POSITIVE_INFINITY);
         ambient.setInfluencingBounds(lightBounds);
         light.setInfluencingBounds(lightBounds);
         light2.setInfluencingBounds(lightBounds);
@@ -178,11 +185,11 @@ public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
         br.addChild(light2);
         return br;
     }
-    
-	private void initialize(Canvas3D canvas) {
+
+    private void initialize(Canvas3D canvas) {
         SimpleUniverse universe = new SimpleUniverse(canvas);
-		BranchGroup scene = createSceneGraph();
-		
+        BranchGroup scene = createSceneGraph();
+
         ViewingPlatform vp = universe.getViewingPlatform();
         vp.setNominalViewingTransform();
         TransformGroup viewingTG = vp.getViewPlatformTransform();
@@ -192,7 +199,7 @@ public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
 
         universe.addBranchGraph(createLight());
         setColor("BBBBBBBBBGGGGGGGGGOOOOOOOOOYYYYYYYYYRRRRRRRRRWWWWWWWWW");
-	}
+    }
 
     /**
      * @param args
@@ -203,90 +210,94 @@ public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
         sample.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         sample.setVisible(true);
     }
-    
-	@Override
-	public void actionPerformed(ActionEvent event) {
-		Object src = event.getSource();
-		if (src == setupButton) {
-			setColor(color.getText());
-			setOperation(command.getText());
-			setSpeed(speed.getText());
-		} else if (src instanceof JButton) {
-			JButton bt = (JButton)src;
-			CommandType t = commandMap.get(bt);
-			if (t != null) {
-				animation.addCommand(new Command(t, ""));
-				animation.start();
-			}
-		}
-	}
 
-	private void setOperation(String text) {
-		if (text.length() == 0) {
-			return;
-		}
-		text = convertText(text);
-		animation.stop();
-		for (int i = 0; i < text.length(); i += 2) {
-			String s = text.substring(i, i+2);
-			CommandType t = Command.getCommandType(s);
-			if (t != null) {
-				animation.addCommand(new Command(t, ""));
-			}
-		}
-		command.setText("");
-		animation.start();
-	}
+    @Override
+    public void actionPerformed(ActionEvent event) {
+        Object src = event.getSource();
+        if (src == setupButton) {
+            //setColor(color.getText());
+            setOperation(command.getText());
+            setSpeed(speed.getText());
+        } else if (src == setColor) {
+            inputFrame.addCubeBehavior(animation);
+            inputFrame.setLocationRelativeTo(setColor);
+            inputFrame.setVisible(true);
+        } else if (src instanceof JButton) {
+            JButton bt = (JButton) src;
+            CommandType t = commandMap.get(bt);
+            if (t != null) {
+                animation.addCommand(new Command(t, ""));
+                animation.start();
+            }
+        }
+    }
 
-	private void setColor(String text) {
-		if (text.length() == 0) {
-			return;
-		}
-		if (text.length() < 54) {
-			message.setForeground(Color.RED);
-			message.setText("文字列が短かすぎます");
-			return;
-		}
-		animation.stop();
-		animation.addCommand(new Command(CommandType.COLOR, text));
-		animation.start();
-		color.setText("");
-	}
-	
-	private void setSpeed(String speed) {
-		if (speed.length() == 0) {
-			return;
-		}
-		animation.stop();
-		animation.addCommand(new Command(CommandType.SPEED, speed));
-		animation.start();
-	}
+    private void setOperation(String text) {
+        if (text.length() == 0) {
+            return;
+        }
+        text = convertText(text);
+        animation.stop();
+        for (int i = 0; i < text.length(); i += 2) {
+            String s = text.substring(i, i + 2);
+            CommandType t = Command.getCommandType(s);
+            if (t != null) {
+                animation.addCommand(new Command(t, ""));
+            }
+        }
+        command.setText("");
+        animation.start();
+    }
 
-	private String convertText(String text) {
-		StringBuilder sb = new StringBuilder();
-		char pre = 0;
-		for (int i = 0; i < text.length(); i++) {
-			char c = text.charAt(i);
-			if (c == 'U' || c == 'R' || c == 'F') {
-				if (pre == 0) {
-					pre = c;
-				} else {
-					sb.append(pre);
-					sb.append('1');
-					pre = c;
-				}
-			} else if (c == '1' || c == '2' || c == '3') {
-				sb.append(pre);
-				sb.append(c);
-				pre = 0;
-			}
-		}
-		if (pre != 0) {
-			sb.append(pre);
-			sb.append('1');
-			pre = 0;
-		}
-		return sb.toString();
-	}
+    private void setColor(String text) {
+        if (text.length() == 0) {
+            return;
+        }
+        if (text.length() < 54) {
+            message.setForeground(Color.RED);
+            message.setText("文字列が短かすぎます");
+            return;
+        }
+        animation.stop();
+        animation.addCommand(new Command(CommandType.COLOR, text));
+        animation.start();
+        //color.setText("");
+    }
+
+    private void setSpeed(String speed) {
+        if (speed.length() == 0) {
+            return;
+        }
+        animation.stop();
+        animation.addCommand(new Command(CommandType.SPEED, speed));
+        animation.start();
+    }
+
+    private String convertText(String text) {
+        StringBuilder sb = new StringBuilder();
+        char pre = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == 'U' || c == 'R' || c == 'F') {
+                if (pre == 0) {
+                    pre = c;
+                } else {
+                    sb.append(pre);
+                    sb.append('1');
+                    pre = c;
+                }
+            } else if (c == '1' || c == '2' || c == '3') {
+                sb.append(pre);
+                sb.append(c);
+                pre = 0;
+            }
+        }
+        if (pre != 0) {
+            sb.append(pre);
+            sb.append('1');
+            pre = 0;
+        }
+        return sb.toString();
+    }
 
 }

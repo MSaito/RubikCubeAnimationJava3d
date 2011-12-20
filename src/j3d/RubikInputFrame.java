@@ -51,6 +51,14 @@ public class RubikInputFrame extends JFrame implements ActionListener {
         add(new JPanel());
         add(makeCommandPanel());
         pack();
+        if (size == 2) {
+            setSize(RubikProperties.getInt("rubikinputframe.size2x2x2.width"),
+                    RubikProperties.getInt("rubikinputframe.size2x2x2.height"));
+        } else {
+            setSize(RubikProperties.getInt("rubikinputframe.size3x3x3.width"),
+                    RubikProperties.getInt("rubikinputframe.size3x3x3.height"));            
+        }
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
     private JPanel makeCurrentColorPanel() {
@@ -146,7 +154,9 @@ public class RubikInputFrame extends JFrame implements ActionListener {
         if (src == ok) {
             if (cubeBehavior != null) {
                 Command command = new Command(CommandType.COLOR, makeColorString());
+                cubeBehavior.stop();
                 cubeBehavior.addCommand(command);
+                cubeBehavior.start();
             }
             setVisible(false);
         } else if (src == cancel) {
@@ -156,9 +166,20 @@ public class RubikInputFrame extends JFrame implements ActionListener {
     
     private String makeColorString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < buttons.length; i++) {
+        int square = rubikSize * rubikSize;
+        for (int i = 0; i < square; i++) {
             sb.append(buttons[i].getText());
         }
+        for (int i = square * 2; i < square * 5; i++) {
+            sb.append(buttons[i].getText());
+        }
+        for (int i = square; i < square * 2; i++) {
+            sb.append(buttons[i].getText());
+        }
+        for (int i = square * 5; i < square * 6; i++) {
+            sb.append(buttons[i].getText());
+        }
+        logger.info("colorString:" + sb.toString());
         return sb.toString();
     }
 

@@ -37,30 +37,35 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private HashMap<JButton, CommandType> commandMap;
     private CubeBehavior2x2x2 animation;
-    private JTextField color;
+    //private JTextField color;
+    private JButton setColor;
     private JTextField command;
     private JTextField speed;
     private JButton setupButton;
     private JLabel message;
     private Canvas3D canvas;
+    private RubikInputFrame inputFrame;
 	
     /**
      * ボタンの設定
      */
 	private void setUpButton() {
+	    inputFrame = new RubikInputFrame("Input 2x2x2", 2);
 		commandMap = new HashMap<JButton, CommandType>();
 		JPanel outer = new JPanel();
 		outer.setLayout(new BoxLayout(outer, BoxLayout.Y_AXIS));
         getContentPane().add(outer, BorderLayout.EAST);
 		JPanel north = new JPanel();
 		north.setLayout(new GridLayout(8, 1));
-		color = new JTextField(15);
+		//color = new JTextField(15);
+		setColor = new JButton("カラー設定");
+		setColor.addActionListener(this);
 		command = new JTextField(15);
 		speed = new JTextField(15);
 		setupButton = new JButton("設定");
 		message = new JLabel("    ");
-		north.add(new JLabel("初期色の設定"));
-		north.add(color);
+		//north.add(new JLabel("初期色の設定"));
+		north.add(setColor);
 		north.add(new JLabel("操作の設定"));
 		north.add(command);
 		north.add(new JLabel("速度"));
@@ -238,10 +243,14 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		Object src = event.getSource();
 		if (src == setupButton) {
-			setColor(color.getText());
+			//setColor(color.getText());
 			setOperation(command.getText());
 			setSpeed(speed.getText());
-		} else if (src instanceof JButton) {
+		} else if (src == setColor) {
+		    inputFrame.addCubeBehavior(animation);
+		    inputFrame.setLocationRelativeTo(setColor);
+		    inputFrame.setVisible(true);
+ 		} else if (src instanceof JButton) {
 			JButton bt = (JButton)src;
 			CommandType t = commandMap.get(bt);
 			if (t != null) {
@@ -290,7 +299,7 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
 		animation.stop();
 		animation.addCommand(new Command(CommandType.COLOR, text));
 		animation.start();
-		color.setText("");
+		//color.setText("");
 	}
 	
 	/**
