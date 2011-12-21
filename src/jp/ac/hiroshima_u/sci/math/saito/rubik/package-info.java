@@ -1,4 +1,4 @@
 /**
  * Java3D によるRubikCubeのアニメーション
  */
-package j3d;
+package jp.ac.hiroshima_u.sci.math.saito.rubik;

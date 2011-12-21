@@ -1,4 +1,4 @@
-package j3d;
+package jp.ac.hiroshima_u.sci.math.saito.rubik;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
