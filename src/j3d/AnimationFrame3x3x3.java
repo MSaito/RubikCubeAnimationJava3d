@@ -152,10 +152,11 @@ public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
                 Double.POSITIVE_INFINITY);
         animation = new CubeBehavior3x3x3();
         animation.setSchedulingBounds(bounds);
-        TransformGroup[] target = animation.getTarget();
-        for (TransformGroup c : target) {
-            root.addChild(c);
-        }
+        TransformGroup target = animation.getTarget();
+        root.addChild(target);
+//        for (int i = 0; i < target.length; i++) {
+//            root.addChild(target[i]);
+//        }
         root.addChild(animation);
         Background background = new Background(new Color3f(0.6f, 0.6f, 0.8f));
         background.setApplicationBounds(bounds);

@@ -170,10 +170,11 @@ public class AnimationFrame2x2x2 extends JFrame implements ActionListener {
         		new Point3d(),Double.POSITIVE_INFINITY);
         animation = new CubeBehavior2x2x2();
         animation.setSchedulingBounds(bounds);
-        TransformGroup[] target = animation.getTarget();
-        for (TransformGroup c: target) {
-        	root.addChild(c);
-        }
+        TransformGroup target = animation.getTarget();
+        root.addChild(target);
+//        for (int i = 0; i < target.length; i++) {
+//            root.addChild(target[i]);
+//        }
         root.addChild(animation);
         Background background = new Background(new Color3f(0.6f, 0.6f, 0.8f));
         background.setApplicationBounds(bounds);

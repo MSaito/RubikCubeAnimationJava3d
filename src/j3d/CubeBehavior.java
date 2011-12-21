@@ -26,37 +26,32 @@ public abstract class CubeBehavior extends Behavior {
     private boolean running;
     private Command currentCommand;
     private Queue<Command> command;
-    private EnumSet<CommandType> viewCommand;
-    private EnumSet<CommandType> internalCommand;
+    private static final EnumSet<CommandType> viewCommand;
+    static {
+    viewCommand = EnumSet.of(CommandType.VIEW_UP, CommandType.VIEW_DOWN,
+            CommandType.VIEW_RIGHT, CommandType.VIEW_LEFT);
+    viewCommand.add(CommandType.VIEW_RESET);
+    }
+    private static final EnumSet<CommandType> internalCommand; 
+    static {
+        internalCommand = EnumSet.of(CommandType.COLOR, CommandType.SPEED);
+        internalCommand.addAll(viewCommand);   
+    }
  
-    /*
-     * protected final EnumSet は安全ではない。むしろかなり危険。
-     * ImmutableEnumSet を使うべきである。もし、あれば。
-     * enum が便利なクラスならば、EnumSetもまた便利なクラスであるが、
-     * enum はimmutable なのに EnumSet は mutable なので、危険。
-     * サブクラスに見せる必要性がなければ、問題ないのだが。
-     */
-    /**
-     * U1, U2, U3 をまとめた
-     */
-    protected final EnumSet<CommandType> up = EnumSet.of(CommandType.U1,
-            CommandType.U2, CommandType.U3);
-    protected final EnumSet<CommandType> down = EnumSet.of(CommandType.D1,
-            CommandType.D2, CommandType.D3);
-    protected final EnumSet<CommandType> right = EnumSet.of(CommandType.R1,
-            CommandType.R2, CommandType.R3);
-    protected final EnumSet<CommandType> left = EnumSet.of(CommandType.L1,
-            CommandType.L2, CommandType.L3);
-    protected final EnumSet<CommandType> front = EnumSet.of(CommandType.F1,
-            CommandType.F2, CommandType.F3);
-    protected final EnumSet<CommandType> back = EnumSet.of(CommandType.B1,
-            CommandType.B2, CommandType.B3);
-    protected final EnumSet<CommandType> two;
-    protected final EnumSet<CommandType> inverse;
-    protected final EnumSet<CommandType> counterSide;
-    protected final EnumSet<CommandType> normalSetFrom;
-    protected final EnumSet<CommandType> doubleSetFrom;
-    protected final EnumSet<CommandType> inverseSetFrom;
+    private static final EnumSet<CommandType> normalSetFrom;
+    static {
+        normalSetFrom = EnumSet.of(CommandType.U1, CommandType.R3,
+                CommandType.F1);
+        normalSetFrom.addAll(EnumSet.of(CommandType.D3, CommandType.L1,
+                CommandType.B3));
+    }
+    private static final EnumSet<CommandType> inverseSetFrom;
+    static {
+        inverseSetFrom = EnumSet.of(CommandType.U3, CommandType.R1,
+                CommandType.F3);
+        inverseSetFrom.addAll(EnumSet.of(CommandType.D1, CommandType.L3,
+                CommandType.B1));
+    }
 
     private long defaultMax = RubikProperties.getInt("cubebehavior.maxCounter");
     private long maxCounter = defaultMax;
@@ -67,37 +62,17 @@ public abstract class CubeBehavior extends Behavior {
     private ViewPoint viewTransform;
     protected Cubie[] cubies;
     private Cubie[] initialCubies;
+    private TransformGroup rubikCube;
 
     private final WakeupOnElapsedFrames wakeUp;
 
     public CubeBehavior(Cubie[] cubies, double viewDistance) {
-        two = EnumSet.of(CommandType.U2, CommandType.R2, CommandType.F2);
-        two.addAll(EnumSet.of(CommandType.D2, CommandType.L2, CommandType.B2));
-        inverse = EnumSet.of(CommandType.U3, CommandType.R3, CommandType.F3);
-        inverse.addAll(EnumSet.of(CommandType.D3, CommandType.L3,
-                CommandType.B3));
-        counterSide = EnumSet
-                .of(CommandType.D1, CommandType.D2, CommandType.D3);
-        counterSide.addAll(EnumSet.of(CommandType.L1, CommandType.L2,
-                CommandType.L3));
-        counterSide.addAll(EnumSet.of(CommandType.B1, CommandType.B2,
-                CommandType.B3));
-        normalSetFrom = EnumSet.of(CommandType.U1, CommandType.R3,
-                CommandType.F1);
-        normalSetFrom.addAll(EnumSet.of(CommandType.D3, CommandType.L1,
-                CommandType.B3));
-        doubleSetFrom = EnumSet.of(CommandType.U2, CommandType.R2,
-                CommandType.F2);
-        doubleSetFrom.addAll(EnumSet.of(CommandType.D2, CommandType.L2,
-                CommandType.B2));
-        inverseSetFrom = EnumSet.of(CommandType.U3, CommandType.R1,
-                CommandType.F3);
-        inverseSetFrom.addAll(EnumSet.of(CommandType.D1, CommandType.L3,
-                CommandType.B1));
         this.cubies = cubies;
         this.initialCubies = new Cubie[this.cubies.length];
+        this.rubikCube = new TransformGroup();
         for (int i = 0; i < this.cubies.length; i++) {
             initialCubies[i] = cubies[i];
+            rubikCube.addChild(cubies[i]);
         }
         viewTransform = new ViewPoint(viewDistance);
         wakeUp = new WakeupOnElapsedFrames(0);
@@ -105,13 +80,14 @@ public abstract class CubeBehavior extends Behavior {
         command = new LinkedList<Command>();
         currentCommand = NOP;
         counter = 0;
-        viewCommand = EnumSet.of(CommandType.VIEW_UP, CommandType.VIEW_DOWN,
-                CommandType.VIEW_RIGHT, CommandType.VIEW_LEFT);
-        viewCommand.add(CommandType.VIEW_RESET);
-        internalCommand = EnumSet.of(CommandType.COLOR, CommandType.SPEED);
-        internalCommand.addAll(viewCommand);
     }
 
+    protected boolean isNormalSetFrom(CommandType type) {
+        return normalSetFrom.contains(type);
+    }
+    protected boolean isInverseSetFrom(CommandType type) {
+        return inverseSetFrom.contains(type);
+    }
     protected long getMaxCounter() {
         return maxCounter;
     }
@@ -128,8 +104,8 @@ public abstract class CubeBehavior extends Behavior {
         return viewTransform.getTransform3D();
     }
 
-    public TransformGroup[] getTarget() {
-        return cubies;
+    public TransformGroup getTarget() {
+        return rubikCube;
     }
 
     public void addCommand(Command com) {

@@ -12,7 +12,7 @@ import javax.vecmath.Vector3d;
  * 視点方向はz軸のマイナス方向
  * baseTransform 複数回の回転を超えて累積していく
  * fixedTransform 正面ではなくちょっとずれてみるためのもの。
- * viewTransform baseTransform のあと、fixedTransform でずれた視点。
+ * viewTransform 最終的な視点 baseTransform のあと、fixedTransform でずれた視点。
  * 
  * @author M. Saito
  */

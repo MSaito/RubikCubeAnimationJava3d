@@ -27,7 +27,7 @@ public class ColorAppearance {
 	private static final Color3f Yellow = new Color3f(1.0f, 1.0f, 0.0f);
 	private static final Color3f Orange = new Color3f(1.0f, 0.4f, 0.0f);
 	private static final Color3f White = new Color3f(1.0f, 1.0f, 1.0f);
-	private static final Color3f Grey = new Color3f(0.1f, 0.1f, 0.1f);
+	private static final Color3f Grey = new Color3f(0.3f, 0.3f, 0.3f);
 
 	private static ColorAppearance me;
 	private HashMap<String, Appearance> colors;

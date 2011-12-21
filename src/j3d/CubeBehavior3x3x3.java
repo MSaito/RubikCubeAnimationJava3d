@@ -23,6 +23,7 @@ public final class CubeBehavior3x3x3 extends CubeBehavior {
             8, 15, 16, 17, 24, 25, 26, 8, 5, 2, 17, 14, 11, 26, 23, 20, 2, 1,
             0, 11, 10, 9, 20, 19, 18, 0, 3, 6, 9, 12, 15, 18, 21, 24, 24, 25,
             26, 21, 22, 23, 18, 19, 20 };
+    private static final double totalAngle = Math.PI / 2.0;
 
     private Cubie[] moving;
     private double angle;
@@ -66,7 +67,7 @@ public final class CubeBehavior3x3x3 extends CubeBehavior {
     protected void tearDown(CommandType type) {
         logger.fine("tear down");
         for (Cubie c : moving) {
-            if (counterSide.contains(type)) {
+            if (type.isCounterSide()) {
                 c.teardownRotation(counterMap.get(type));
             } else {
                 c.teardownRotation(type);
@@ -74,27 +75,27 @@ public final class CubeBehavior3x3x3 extends CubeBehavior {
         }
         int[] fromIdxs;
         int[] toIdxs;
-        if (normalSetFrom.contains(type)) {
+        if (isNormalSetFrom(type)) {
             fromIdxs = normalIdxFrom;
-        } else if (doubleSetFrom.contains(type)) {
+        } else if (type.isDouble()) {
             fromIdxs = doubleIdxFrom;
-        } else if (inverseSetFrom.contains(type)) {
+        } else if (isInverseSetFrom(type)) {
             fromIdxs = inverseIdxFrom;
         } else {
             logger.severe("Unexpected case");
             fromIdxs = new int[0];
         }
-        if (up.contains(type)) {
+        if (type.isUp()) {
             toIdxs = upIndexes;
-        } else if (down.contains(type)) {
+        } else if (type.isDown()) {
             toIdxs = downIndexes;
-        } else if (right.contains(type)) {
+        } else if (type.isRight()) {
             toIdxs = rightIndexes;
-        } else if (left.contains(type)) {
+        } else if (type.isLeft()) {
             toIdxs = leftIndexes;
-        } else if (front.contains(type)) {
+        } else if (type.isFront()) {
             toIdxs = frontIndexes;
-        } else if (back.contains(type)) {
+        } else if (type.isBack()) {
             toIdxs = backIndexes;
         } else {
             logger.severe("Unexpected case");
@@ -109,19 +110,20 @@ public final class CubeBehavior3x3x3 extends CubeBehavior {
     @Override
     protected void setupCommand(CommandType type) {
         logger.fine("setupCommand type:" + type);
-        angle = Math.PI / 2.0 / getMaxCounter();
+        angle = totalAngle / getMaxCounter();
+        double toAngle = totalAngle;
         int[] indexes;
-        if (up.contains(type)) {
+        if (type.isUp()) {
             indexes = upIndexes;
-        } else if (down.contains(type)) {
+        } else if (type.isDown()) {
             indexes = downIndexes;
-        } else if (right.contains(type)) {
+        } else if (type.isRight()) {
             indexes = rightIndexes;
-        } else if (left.contains(type)) {
+        } else if (type.isLeft()) {
             indexes = leftIndexes;
-        } else if (front.contains(type)) {
+        } else if (type.isFront()) {
             indexes = frontIndexes;
-        } else if (back.contains(type)) {
+        } else if (type.isBack()) {
             indexes = backIndexes;
         } else {
             logger.severe("Unexpected case");
@@ -130,19 +132,20 @@ public final class CubeBehavior3x3x3 extends CubeBehavior {
         for (int i = 0; i < moving.length; i++) {
             moving[i] = cubies[indexes[i]];
         }
-        if (two.contains(type)) {
+        if (type.isDouble()) {
             setCounter(getMaxCounter() * 2);
         } else {
             setCounter(getMaxCounter());
-            if (inverse.contains(type)) {
+            if (type.isInverse()) {
                 angle = -angle;
+                toAngle = -toAngle;
             }
         }
         for (Cubie c : moving) {
-            if (counterSide.contains(type)) {
-                c.setupRotation(counterMap.get(type), -angle);
+            if (type.isCounterSide()) {
+                c.setupRotation(counterMap.get(type), -angle, -toAngle);
             } else {
-                c.setupRotation(type, angle);
+                c.setupRotation(type, angle, toAngle);
             }
         }
     }

@@ -12,6 +12,7 @@ public final class CubeBehavior2x2x2 extends CubeBehavior {
     private static final int[] normalIdxFrom = { 2, 0, 3, 1 };
     private static final int[] doubleIdxFrom = { 3, 2, 1, 0 };
     private static final int[] inverseIdxFrom = { 1, 3, 0, 2 };
+    private static final double totalAngle = Math.PI / 2.0;
 
 	private Cubie[] moving;
 	private double angle;
@@ -50,20 +51,20 @@ public final class CubeBehavior2x2x2 extends CubeBehavior {
 		}
 		int[] indexes;
         int[] toIdx;
-		if (normalSetFrom.contains(type)) {
+		if (isNormalSetFrom(type)) {
             indexes = normalIdxFrom; 
-		} else if (doubleSetFrom.contains(type)) {
+		} else if (type.isDouble()) {
 		    indexes = doubleIdxFrom;
-		} else if (inverseSetFrom.contains(type)) {
+		} else if (isInverseSetFrom(type)) {
 		    indexes = inverseIdxFrom;
 		} else {
 		    indexes = new int[0];
 		}
-        if (up.contains(type)) {
+        if (type.isUp()) {
             toIdx = upIndexes;
-        } else if (right.contains(type)) {
+        } else if (type.isRight()) {
             toIdx = rightIndexes;
-        } else if (front.contains(type)) {
+        } else if (type.isFront()) {
             toIdx = frontIndexes;
         } else {
             toIdx = new int[0];
@@ -76,13 +77,14 @@ public final class CubeBehavior2x2x2 extends CubeBehavior {
 
 	@Override
 	protected void setupCommand(CommandType type) {
-        angle = Math.PI / 2.0 / getMaxCounter();
+        angle = totalAngle / getMaxCounter();
+        double toAngle = totalAngle;
         int[] indexes;
-        if (up.contains(type)) {
+        if (type.isUp()) {
             indexes = upIndexes;
-        } else if (right.contains(type)) {
+        } else if (type.isRight()) {
             indexes = rightIndexes;
-        } else if (front.contains(type)) {
+        } else if (type.isFront()) {
             indexes = frontIndexes;
         } else {
             logger.severe("Unexpected case");
@@ -91,16 +93,17 @@ public final class CubeBehavior2x2x2 extends CubeBehavior {
         for (int i = 0; i < 4; i++) {
             moving[i] = cubies[indexes[i]];
         }
-        if (two.contains(type)) {
+        if (type.isDouble()) {
             setCounter(getMaxCounter() * 2);
         } else {
             setCounter(getMaxCounter());
-            if (inverse.contains(type)) {
+            if (type.isInverse()) {
                 angle = -angle;
+                toAngle = -toAngle;
             }
         }
         for (Cubie c : moving) {
-            c.setupRotation(type, angle);
+            c.setupRotation(type, angle, toAngle);
         }
 	}
 	
