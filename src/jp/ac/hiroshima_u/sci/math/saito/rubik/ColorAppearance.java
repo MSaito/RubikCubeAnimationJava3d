@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import javax.media.j3d.Appearance;
 import javax.media.j3d.Material;
+import javax.media.j3d.TransparencyAttributes;
 import javax.vecmath.Color3f;
 
 /**
@@ -27,51 +28,43 @@ public class ColorAppearance {
 	private static final Color3f Yellow = new Color3f(1.0f, 1.0f, 0.0f);
 	private static final Color3f Orange = new Color3f(1.0f, 0.4f, 0.0f);
 	private static final Color3f White = new Color3f(1.0f, 1.0f, 1.0f);
-	private static final Color3f Grey = new Color3f(0.3f, 0.3f, 0.3f);
+	private static final Color3f Grey = new Color3f(0.4f, 0.4f, 0.4f);
+    private static final Color3f Black = new Color3f(0.1f, 0.1f, 0.1f);
 
 	private static ColorAppearance me;
 	private HashMap<String, Appearance> colors;
 	private HashMap<String, Color3f> color3fs = makeColorMap();
 	
+	private Appearance getAppearance(Color3f c) {
+        Material m = new Material();
+        Appearance ap = new Appearance();
+        m.setDiffuseColor(c);
+        ap.setMaterial(m);
+        return ap;
+	}
+	
 	private ColorAppearance () {
-		colors = new HashMap<String, Appearance>();
-		Appearance ap;
-		Material m;
-		m = new Material();
-		ap = new Appearance();
-		m.setDiffuseColor(Red);
-		ap.setMaterial(m);
-		colors.put("R", ap);
-		m = new Material();
-		ap = new Appearance();
-		m.setDiffuseColor(Green);
-		ap.setMaterial(m);
-		colors.put("G", ap);
-		m = new Material();
-		ap = new Appearance();
-		m.setDiffuseColor(Blue);
-		ap.setMaterial(m);
-		colors.put("B", ap);
-		m = new Material();
-		ap = new Appearance();
-		m.setDiffuseColor(Yellow);
-		ap.setMaterial(m);
-		colors.put("Y", ap);
-		m = new Material();
-		ap = new Appearance();
-		m.setDiffuseColor(Orange);
-		ap.setMaterial(m);
-		colors.put("O", ap);
-		m = new Material();
-		ap = new Appearance();
-		m.setDiffuseColor(White);
-		ap.setMaterial(m);
-		colors.put("W", ap);
-		m = new Material();
-		ap = new Appearance();
-		m.setDiffuseColor(Grey);
-		ap.setMaterial(m);
-		colors.put("", ap);
+	    colors = new HashMap<String, Appearance>();
+		colors.put("R", getAppearance(Red));
+        colors.put("G", getAppearance(Green));
+        colors.put("B", getAppearance(Blue));
+        colors.put("Y", getAppearance(Yellow));
+        colors.put("O", getAppearance(Orange));
+        colors.put("W", getAppearance(White));
+        colors.put("", getAppearance(Grey));
+		// “§–¾
+        Material m = new Material();
+        Appearance ap = new Appearance();
+        m.setDiffuseColor(Black);
+        ap.setMaterial(m);
+        TransparencyAttributes attr=new TransparencyAttributes(TransparencyAttributes.NICEST, 0.8f);
+        //attr.setTransparency(0.5f);
+        ap.setTransparencyAttributes(attr);
+        colors.put("T", ap);
+//        ap = colors.get("");
+//        ap.getMaterial().setSpecularColor(Grey);
+//        ap.getMaterial().setAmbientColor(Grey);
+//        ap.getMaterial().setShininess(100);
 	}
 	
 	private static HashMap<String, Color3f> makeColorMap() {

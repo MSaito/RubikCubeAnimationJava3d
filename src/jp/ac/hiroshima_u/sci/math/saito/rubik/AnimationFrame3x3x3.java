@@ -41,6 +41,7 @@ public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
     private JLabel message;
     private Canvas3D canvas;
     private RubikInputFrame inputFrame;
+    private boolean isVoid = false;
 
     private void setUpButton() {
         inputFrame = new RubikInputFrame("Input 3x3x3", 3);
@@ -136,7 +137,12 @@ public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
     }
 
     public AnimationFrame3x3x3() {
+        this(false);
+    }
+    
+    public AnimationFrame3x3x3(boolean isVoid) {
         super("Rubik Cube 3x3x3");
+        this.isVoid = isVoid;
         getContentPane().setLayout(new BorderLayout());
         GraphicsConfiguration config = SimpleUniverse
                 .getPreferredConfiguration();
@@ -150,7 +156,11 @@ public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
         BranchGroup root = new BranchGroup();
         BoundingSphere bounds = new BoundingSphere(new Point3d(),
                 Double.POSITIVE_INFINITY);
-        animation = new CubeBehavior3x3x3();
+        if (isVoid) {
+            animation = new CubeBehaviorVoid();
+        } else {
+            animation = new CubeBehavior3x3x3();
+        }
         animation.setSchedulingBounds(bounds);
         TransformGroup target = animation.getTarget();
         root.addChild(target);
@@ -169,12 +179,11 @@ public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
 
     private BranchGroup createLight() {
         Color3f lightColor = new Color3f(1.0f, 1.0f, 1.0f);
-        Color3f lightColor2 = new Color3f(0.8f, 0.8f, 0.8f);
         AmbientLight ambient = new AmbientLight(lightColor);
-        Vector3f direction = new Vector3f(-2.0f, -2.0f, -2.0f);
-        Vector3f direction2 = new Vector3f(2.0f, 2.0f, 2.0f);
+        Vector3f direction = new Vector3f(-1.8f, -1.3f, 2.0f);
+        Vector3f direction2 = new Vector3f(1.8f, 1.3f, -2.0f);
         DirectionalLight light = new DirectionalLight(lightColor, direction);
-        DirectionalLight light2 = new DirectionalLight(lightColor2, direction2);
+        DirectionalLight light2 = new DirectionalLight(lightColor, direction2);
         BoundingSphere lightBounds = new BoundingSphere(new Point3d(),
                 Double.POSITIVE_INFINITY);
         ambient.setInfluencingBounds(lightBounds);
@@ -200,12 +209,14 @@ public class AnimationFrame3x3x3 extends JFrame implements ActionListener {
 
         universe.addBranchGraph(createLight());
         setColor("BBBBBBBBBGGGGGGGGGOOOOOOOOOYYYYYYYYYRRRRRRRRRWWWWWWWWW");
+        //setColor("BBBBTBBBBGGGGTGGGGOOOOTOOOOYYYYTYYYYRRRRTRRRRWWWWTWWWW");
     }
 
     /**
      * @param args
      */
     public static void main(String[] args) {
+        //AnimationFrame3x3x3 sample = new AnimationFrame3x3x3(true); // void cube
         AnimationFrame3x3x3 sample = new AnimationFrame3x3x3();
         sample.setBounds(10, 10, 1000, 1000);
         sample.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

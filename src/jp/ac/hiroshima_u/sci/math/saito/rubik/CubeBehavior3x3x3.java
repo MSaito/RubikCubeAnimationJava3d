@@ -3,7 +3,7 @@ package jp.ac.hiroshima_u.sci.math.saito.rubik;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-public final class CubeBehavior3x3x3 extends CubeBehavior {
+public class CubeBehavior3x3x3 extends CubeBehavior {
     private final Logger logger = Logger.getLogger(CubeBehavior3x3x3.class
             .getCanonicalName());
 
@@ -35,6 +35,10 @@ public final class CubeBehavior3x3x3 extends CubeBehavior {
      */
     public CubeBehavior3x3x3() {
         super(makeRubik3x3x3(), 8.0);
+        constructerHelper();
+    }
+    
+    private void constructerHelper() {
         logger.fine("constructor called");
         moving = new Cubie[9];
         counterMap = new HashMap<CommandType, CommandType>();
@@ -48,7 +52,11 @@ public final class CubeBehavior3x3x3 extends CubeBehavior {
         counterMap.put(CommandType.B2, CommandType.F2);
         counterMap.put(CommandType.B3, CommandType.F1);
     }
-
+    public CubeBehavior3x3x3(Cubie[] cubies, double distance) {
+        super(cubies, distance);
+        constructerHelper();
+    }
+    
     private static Cubie[] makeRubik3x3x3() {
         Cubie[] rubik = new Cubie[27];
         double size = 0.5;
