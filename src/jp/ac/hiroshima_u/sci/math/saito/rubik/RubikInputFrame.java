@@ -154,9 +154,9 @@ public class RubikInputFrame extends JFrame implements ActionListener {
         if (src == ok) {
             if (cubeBehavior != null) {
                 Command command = new Command(CommandType.COLOR, makeColorString());
-                cubeBehavior.stop();
+                //cubeBehavior.stop();
                 cubeBehavior.addCommand(command);
-                cubeBehavior.start();
+                //cubeBehavior.start();
             }
             setVisible(false);
         } else if (src == cancel) {

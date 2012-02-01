@@ -192,6 +192,11 @@ public class Cubie extends TransformGroup {
         inverseRot.transform(ax);
         inverseRot.transform(ay);
         inverseRot.transform(az);
+        if (type.isDouble()) {
+            inverseRot.transform(ax);
+            inverseRot.transform(ay);
+            inverseRot.transform(az);            
+        }
     }
 
     /**

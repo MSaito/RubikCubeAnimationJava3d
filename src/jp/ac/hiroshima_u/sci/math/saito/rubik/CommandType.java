@@ -5,6 +5,7 @@ import java.util.EnumSet;
 public enum CommandType {
 	U1, U2, U3, R1, R2, R3, F1, F2, F3,
 	D1, D2, D3, L1, L2, L3, B1, B2, B3,
+	ROT_X, ROT_X3, ROT_Y, ROT_Y3, ROT_Z, ROT_Z3, 
 	VIEW_UP, VIEW_DOWN, VIEW_RIGHT, VIEW_LEFT, VIEW_RESET,
 	COLOR, SPEED, NOP;
     private static final EnumSet<CommandType> up = EnumSet.of(CommandType.U1,
@@ -39,8 +40,10 @@ public enum CommandType {
         counterSide.addAll(EnumSet.of(CommandType.B1, CommandType.B2,
                 CommandType.B3));
     }
-	//private static final EnumSet<CommandType> viewCommand;
+	private static final EnumSet<CommandType> rotation;
 	static {
+	    rotation = EnumSet.of(CommandType.ROT_X, CommandType.ROT_Y, CommandType.ROT_Z);
+	    rotation.addAll(EnumSet.of(CommandType.ROT_X3, CommandType.ROT_Y3, CommandType.ROT_Z3));
 	}
 	public boolean isUp() {
 	    return up.contains(this);
@@ -68,5 +71,8 @@ public enum CommandType {
 	}
 	public boolean isCounterSide() {
 	    return counterSide.contains(this);
+	}
+	public boolean isRotation() {
+	    return rotation.contains(this);
 	}
 }
