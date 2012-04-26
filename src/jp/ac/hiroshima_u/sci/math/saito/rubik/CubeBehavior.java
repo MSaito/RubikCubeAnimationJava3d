@@ -115,6 +115,10 @@ public abstract class CubeBehavior extends Behavior {
         }
     }
 
+    public boolean isIdle() {
+        return command.isEmpty() && (running == false);
+    }
+    
     public void start() {
         logger.fine("start");
         synchronized (this) {
@@ -195,6 +199,8 @@ public abstract class CubeBehavior extends Behavior {
                         tearDown(type);
                     }
                 }
+            } else {
+                running = false;
             }
         }
         wakeupOn(wakeUp);

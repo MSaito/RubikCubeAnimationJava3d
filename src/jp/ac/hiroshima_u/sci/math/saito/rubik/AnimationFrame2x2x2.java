@@ -105,6 +105,10 @@ public class AnimationFrame2x2x2 extends JFrame {
 	    commandPanel.setOperation(cmd);
 	}
 	
+	public boolean isIdle() {
+	    return animation.isIdle();
+	}
+	
     /**
      * ‹N“®—pƒƒCƒ“ˆ—
      * @param args

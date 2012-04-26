@@ -34,8 +34,33 @@ public class Room {
         {0.0f, -1.0f, 0.0f},
         {0.0f, 0.0f, -1.0f},
         {-1.0f, 0.0f, 0.0f}};
+    private static final Texture wall = makeTexture("wall038.jpg"); 
+    private static final Texture floor = makeTexture("flooring31.jpg");
+    private static final Texture ceil = makeTexture("flooring31.jpg");
+    private static final Appearance[] appearance = makeAppearance();
     private TransformGroup transGrp;
 
+    private static Appearance[] makeAppearance() {
+        Appearance[] app = new Appearance[6];
+        Texture[] tex = {ceil, wall, wall, floor, wall, wall};
+        for (int i = 0; i < 6; i++) {
+            app[i] = new Appearance();
+            app[i].setTexture(tex[i]);
+        }
+        return app;
+    }
+    private static Texture makeTexture(String imageFileName) {
+        BufferedImage image;
+        Texture texture;
+        try {
+            image = ImageIO.read(RubikProperties.getURL(imageFileName));
+            texture = new TextureLoader(image).getTexture();
+        } catch (IOException e) {
+            logger.severe("Can't get texture");
+            throw new RuntimeException(e);
+        }        
+        return texture;
+    }
     /**
      * ルービックキューブのある部屋
      * 六方向に同じ模様の壁を置いているだけ
@@ -43,25 +68,16 @@ public class Room {
      */
     public Room(double size) {
         transGrp = new TransformGroup();
-        BufferedImage image;
-        Texture texture;
-        try {
-            image = ImageIO.read(RubikProperties.getURL("checkerWall2.png"));
-            texture = new TextureLoader(image).getTexture();
-        } catch (IOException e) {
-            logger.severe("Can't get texture");
-            throw new RuntimeException(e);
-        }
-        Appearance ap = new Appearance();
-        ap.setTexture(texture);
         Transform3D texTrans = new Transform3D();
         TextureAttributes attribute = new TextureAttributes();
         texTrans.setScale(size);
         attribute.setTextureTransform(texTrans);
-        ap.setTextureAttributes(attribute);
         float fsize = (float) size;
         for (int i = 0; i < 6; i++) {
-            Box wall = new Box(wallSize[i][0] * fsize,
+            Box wall;
+            Appearance ap = appearance[i];
+            ap.setTextureAttributes(attribute);
+            wall = new Box(wallSize[i][0] * fsize,
                     wallSize[i][1] * fsize,
                     wallSize[i][2] * fsize,
                     Box.GENERATE_NORMALS | Box.GENERATE_TEXTURE_COORDS,

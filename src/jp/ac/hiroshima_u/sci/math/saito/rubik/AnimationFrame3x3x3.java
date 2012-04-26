@@ -94,6 +94,10 @@ public class AnimationFrame3x3x3 extends JFrame {
         setColor("BBBBBBBBBGGGGGGGGGOOOOOOOOOYYYYYYYYYRRRRRRRRRWWWWWWWWW");
     }
 
+    public boolean isIdle() {
+        return animation.isIdle();
+    }
+
     /**
      * @param args
      */
