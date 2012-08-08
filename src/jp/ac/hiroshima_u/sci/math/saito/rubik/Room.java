@@ -34,17 +34,20 @@ public class Room {
         {0.0f, -1.0f, 0.0f},
         {0.0f, 0.0f, -1.0f},
         {-1.0f, 0.0f, 0.0f}};
-    private static final Texture wall = makeTexture("wall038.jpg"); 
-    private static final Texture floor = makeTexture("flooring31.jpg");
-    private static final Texture ceil = makeTexture("flooring31.jpg");
+//    private static final Texture wall = makeTexture("wall038.jpg"); 
+    private static final Texture wall1 = makeTexture("free_highres_texture_3.jpg"); 
+    private static final Texture wall2 = makeTexture("free_highres_texture_6.jpg"); 
+    private static final Texture floor = makeTexture("free_highres_texture_1.jpg");
+    private static final Texture ceil = makeTexture("free_highres_texture_15.jpg");
     private static final Appearance[] appearance = makeAppearance();
     private TransformGroup transGrp;
 
     private static Appearance[] makeAppearance() {
         Appearance[] app = new Appearance[6];
-        Texture[] tex = {ceil, wall, wall, floor, wall, wall};
+        Texture[] tex = {ceil, wall1, wall2, floor, wall1, wall2};
         for (int i = 0; i < 6; i++) {
             app[i] = new Appearance();
+            app[i].setCapability(Appearance.ALLOW_TEXTURE_ATTRIBUTES_WRITE);
             app[i].setTexture(tex[i]);
         }
         return app;
@@ -55,6 +58,9 @@ public class Room {
         try {
             image = ImageIO.read(RubikProperties.getURL(imageFileName));
             texture = new TextureLoader(image).getTexture();
+            texture.setMagFilter(Texture.FASTEST);
+            texture.setBoundaryModeS(Texture.CLAMP);
+            texture.setBoundaryModeT(Texture.CLAMP);
         } catch (IOException e) {
             logger.severe("Can't get texture");
             throw new RuntimeException(e);
@@ -68,15 +74,15 @@ public class Room {
      */
     public Room(double size) {
         transGrp = new TransformGroup();
-        Transform3D texTrans = new Transform3D();
-        TextureAttributes attribute = new TextureAttributes();
-        texTrans.setScale(size);
-        attribute.setTextureTransform(texTrans);
+//        Transform3D texTrans = new Transform3D();
+//        TextureAttributes attribute = new TextureAttributes();
+        //texTrans.setScale(size);
+        //attribute.setTextureTransform(texTrans);
         float fsize = (float) size;
         for (int i = 0; i < 6; i++) {
             Box wall;
             Appearance ap = appearance[i];
-            ap.setTextureAttributes(attribute);
+//            ap.setTextureAttributes(attribute);
             wall = new Box(wallSize[i][0] * fsize,
                     wallSize[i][1] * fsize,
                     wallSize[i][2] * fsize,

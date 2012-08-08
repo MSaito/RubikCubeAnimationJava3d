@@ -7,7 +7,7 @@ public enum CommandType {
 	D1, D2, D3, L1, L2, L3, B1, B2, B3,
 	ROT_X, ROT_X3, ROT_Y, ROT_Y3, ROT_Z, ROT_Z3, 
 	VIEW_UP, VIEW_DOWN, VIEW_RIGHT, VIEW_LEFT, VIEW_RESET,
-	COLOR, SPEED, NOP;
+	COLOR, SPEED, SLEEP, NOP;
     private static final EnumSet<CommandType> up = EnumSet.of(CommandType.U1,
             CommandType.U2, CommandType.U3);
     private static final EnumSet<CommandType> down = EnumSet.of(CommandType.D1,

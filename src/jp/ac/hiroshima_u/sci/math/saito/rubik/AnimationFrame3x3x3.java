@@ -122,4 +122,11 @@ public class AnimationFrame3x3x3 extends JFrame {
         animation.start();
         //color.setText("");
     }
+    /**
+     * •\Ž¦‚ðˆêŽž’âŽ~‚·‚é
+     * @param time ‚±‚ÌŽžŠÔ‚Í•]‰¿‚³‚ê‚È‚¢‚©‚à‚µ‚ê‚È‚¢
+     */
+    public void setSleep(String time) {
+        animation.addCommand(new Command(CommandType.SLEEP, time));
+    }
 }

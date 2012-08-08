@@ -34,7 +34,7 @@ public abstract class CubeBehavior extends Behavior {
     }
     private static final EnumSet<CommandType> internalCommand; 
     static {
-        internalCommand = EnumSet.of(CommandType.COLOR, CommandType.SPEED);
+        internalCommand = EnumSet.of(CommandType.COLOR, CommandType.SPEED, CommandType.SLEEP);
         internalCommand.addAll(viewCommand);   
     }
  
@@ -113,6 +113,7 @@ public abstract class CubeBehavior extends Behavior {
         synchronized (command) {
             command.add(com);
         }
+        start();
     }
 
     public boolean isIdle() {
@@ -212,6 +213,8 @@ public abstract class CubeBehavior extends Behavior {
             setupColor();
         } else if (type == CommandType.SPEED) {
             setupSpeed();
+        } else if (type == CommandType.SLEEP) {
+            //TODO
         } else {
             setupView(type);
         }
@@ -251,7 +254,7 @@ public abstract class CubeBehavior extends Behavior {
 
     private void internalTearDown(CommandType type) {
         if (type == CommandType.NOP || type == CommandType.COLOR
-                || type == CommandType.SPEED) {
+                || type == CommandType.SPEED || type == CommandType.SLEEP) {
             resetCurrentCommand();
             return;
         }
